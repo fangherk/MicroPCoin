@@ -103,6 +103,7 @@ module uPcoin_core(input logic clk,
 	logic [5:0] roundNumber;
 	logic [255:0] intermediate_hash;
 	logic [31:0] a, b, c, d, e, f, g, h;
+	logic [31:0] new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h;
 	logic [31:0] W[0:63];
 	logic [31:0] K;
 	typedef enum logic [5:0]{preProcessing, intermediateStep, waiting, thirdStep, doneHashing} statetype;
@@ -111,7 +112,14 @@ module uPcoin_core(input logic clk,
 	
 	always_ff @(posedge clk, posedge message_load)
 		if (message_load) state <= preProcessing;
-		else              state <= nextstate;
+		else begin
+			state <= nextstate;
+			if(nextstate == waiting) begin
+				intermediate_hash <= {new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h} + intermediate_hash;
+			end else begin
+				intermediate_hash <= intermediate_hash;
+			end
+		end
 		
 	/*always_ff @(negedge clk)
 		if (!block_load) edge_block <= 0;
@@ -132,7 +140,7 @@ module uPcoin_core(input logic clk,
 				else            		            nextstate = preProcessing;
 			intermediateStep:		               nextstate = thirdStep;
 			thirdStep:
-				if(roundNumber == 63)				nextstate = waiting;
+				if(roundNumber == 63) 				nextstate = waiting;
 				else										nextstate = thirdStep;
 			waiting:
 				if(message_load == 0) 	         nextstate = doneHashing;
@@ -162,6 +170,7 @@ module getConstant(input logic [5:0] roundNumber,
 		initial   $readmemh("sha256constants.txt", constant);
 		assign K = constant[roundNumber]; 
 endmodule
+
 module thirdComp(input logic  [31:0] a,b,c,d,e,f,g,h,
 					  input logic  [31:0] W, K, 
 					  output logic [31:0] new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);
