@@ -73,20 +73,43 @@ module uPcoin(input logic  clk,
 				  input logic  sck,
 				  input logic  sdi,
 				  output logic sdo,
-				  input logic  load,
+				  input logic  block_load,
+				  input logic  message_load,
 				  output logic done);
 				  
-	logic [31:0] x,y,z,w;
-	logic[31:0] H0, H1, H2, H3, H4, H5, H6, H7;
-	SIGMA0 a(32'h00000000, x);
-	SIGMA1 b(32'h00000000, y);
-	sigma0 c(32'h00000000, z);
-	sigma1 d(32'h00000000, w);
+	logic [255:0] hash;
+	logic [511:0] message;
 	
-	uPcoin_core core(clk, block_load, message_load, message, done);
+	uPcoin_spi  spi(sck, sdi, sdo, done, message, hash);
+	uPcoin_core core(clk, block_load, message_load, message, done, hash);
 	
 endmodule 
 
+
+
+module uPcoin_spi(input  logic sck, 
+               input  logic sdi,
+               output logic sdo,
+               input  logic done,
+               output logic [511:0] message,
+               input  logic [255:0] hash);
+
+    logic         sdodelayed, wasdone;
+    logic [255:0] hashcaptured;
+               
+    always_ff @(posedge sck)
+        if (!wasdone)  {hashcaptured, message} = {hash, message[510:0], sdi};
+        else           {hashcaptured, message} = {hashcaptured[254:0], message, sdi}; 
+    
+    // sdo should change on the negative edge of sck
+    always_ff @(negedge sck) begin
+        wasdone = done;
+        sdodelayed = hashcaptured[254];
+    end
+    
+    // when done is first asserted, shift out msb before clock edge
+    assign sdo = (done & !wasdone) ? hash[255] : sdodelayed;
+endmodule
 
 
 
@@ -158,6 +181,7 @@ module uPcoin_core(input logic clk,
 	
 	assign {a,b,c,d,e,f,g,h} = intermediate_hash;
 	assign done = (state==doneHashing);
+	assign hash = intermediate_hash;
 	
 endmodule
 
