@@ -69,10 +69,62 @@ module sigma1(input logic  [31:0] x,
  	assign out = ROTR17 ^ ROTR19 ^ SHR10;
 endmodule
 
-module uPcoin(input logic clk);
+module uPcoin(input logic  clk,
+				  input logic  sck,
+				  input logic  sdi,
+				  output logic sdo,
+				  input logic  load,
+				  output logic done);
+				  
 	logic [31:0] x,y,z,w;
+	logic[31:0] H0, H1, H2, H3, H4, H5, H6, H7;
 	SIGMA0 a(32'h00000000, x);
 	SIGMA1 b(32'h00000000, y);
 	sigma0 c(32'h00000000, z);
 	sigma1 d(32'h00000000, w);
+	
+	uPcoin_core core(clk, block_load, message_load, message, done);
+	
 endmodule 
+
+
+
+
+
+module uPcoin_core(input logic clk, 
+						 input logic block_load,
+						 input logic message_load,
+						 input logic [511:0] block,
+						 output logic done,
+						 output logic [255:0] hash);
+						 
+	// Set two variables for the state transition
+	logic falling_edge_block, falling_edge_message;
+	typedef enum logic [3:0]{preProcessing, intermediateStep, waiting, doneHashing} statetype;
+	statetype state, nextstate;
+	
+	
+	always_ff @(posedge clk, posedge message_load)
+		if (message_load) state <= preProcessing;
+		else              state <= nextstate;
+	
+	always_ff @(posedge clk, negedge block_load)
+		if(~block_load) falling_edge_block <= 1;
+		else            falling_edge_block <= 0;
+		
+	always_comb
+		case(state) 
+			preProcessing:
+				if(falling_edge_block)           nextstate = intermediateStep;
+				else            		            nextstate = preProcessing;
+			intermediateStep:		               nextstate = waiting;
+			waiting:
+				if(message_load == 0) 	         nextstate = doneHashing;
+				else if(falling_edge_block == 1) nextstate = intermediateStep;
+				else 									   nextstate = waiting;
+			doneHashing:				            nextstate = doneHashing;			
+		endcase
+		
+	assign done = (state==doneHashing);
+	
+endmodule
