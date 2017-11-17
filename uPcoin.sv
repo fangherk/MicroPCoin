@@ -200,7 +200,7 @@ module uPcoin_core(input logic clk,
   always_ff @(posedge clk)
     begin
       if (state == intermediateStep)      roundNumber <=0;
-      else  								                      roundNumber <= roundNumber + 1;
+      else                                roundNumber <= roundNumber + 1;
 
       if(state == preProcessing)          messageScheduleCounter <= 0;
       else if(state == intermediateStep)  messageScheduleCounter <= messageScheduleCounter + 1;
@@ -233,7 +233,7 @@ module uPcoin_core(input logic clk,
         if(roundNumber < 16) W <= W;
         else                 W[counter3] <= newW;
       end
-      
+
       // Update the variables in 6.2.2.4
       if(state == thirdStep) begin
         a <= new_a;
@@ -252,17 +252,17 @@ module uPcoin_core(input logic clk,
   always_comb
     case(state) 
       preProcessing:
-        if(falling_edge_block)           nextstate = intermediateStep;
-        else            		               nextstate = preProcessing;
-      intermediateStep:		                nextstate = thirdStep;
+        if(falling_edge_block)               nextstate = intermediateStep;
+      else                                   nextstate = preProcessing;
+      intermediateStep:                      nextstate = thirdStep;
       thirdStep:
-        if(roundNumber == 63) 				       nextstate = waiting;
-        else										                   nextstate = thirdStep;
+        if(roundNumber == 63)                nextstate = waiting;
+      else                                   nextstate = thirdStep;
       waiting:
-        if(message_load == 0) 	          nextstate = doneHashing;
-        else if(falling_edge_block == 1) nextstate = intermediateStep;
-        else 									                   nextstate = waiting;
-      doneHashing:				                   nextstate = doneHashing;			
+        if(message_load == 0)                nextstate = doneHashing;
+      else if(falling_edge_block == 1)       nextstate = intermediateStep;
+      else                                   nextstate = waiting;
+      doneHashing:                           nextstate = doneHashing;            
     endcase
 
 
@@ -281,7 +281,7 @@ module uPcoin_core(input logic clk,
   assign next6 = counter2 - 6;
   assign next14 = counter2 - 14;
   assign next15 = counter2 - 15;
-  
+
   // Assign final values for completion
   assign done = (state==doneHashing);
   assign hash = intermediate_hash;
@@ -312,7 +312,7 @@ endmodule
  */
 module thirdComp(input logic  [31:0] a,b,c,d,e,f,g,h,
                  input logic  [31:0] W, K, 
-                 output logic [31:0] new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);		
+                 output logic [31:0] new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);        
   logic [31:0] T1, T2;
   logic [31:0] tempSigma1, tempSigma0, tempCh, tempMaj;
 
@@ -343,7 +343,7 @@ endmodule
 module prepareMessage(input logic [31:0] Wprev2, Wprev7, Wprev15, Wprev16,
                       output logic [31:0] newW);
   logic [31:0] output_sigma0;
-  logic [31:0] output_sigma1;	
+  logic [31:0] output_sigma1;    
   sigma0 s0(Wprev15 , output_sigma0);
   sigma1 s1(Wprev2, output_sigma1);
   assign newW = output_sigma1 + Wprev7 + output_sigma0 + Wprev16;
