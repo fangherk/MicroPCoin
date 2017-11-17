@@ -43,7 +43,7 @@ module testbench();
 			message_load = 1'b0;
 		// Keep loading values if < 512 bits
 		end 
-		
+	
 		if (i < 512) begin
 			#1; sdi = comb[511-i];
 			#1; sck = 1; #5; sck = 0;
@@ -52,7 +52,7 @@ module testbench();
 		// After 512 bits of mesage, add the hash to sdo and check if it is valid.
 		end else if (done && i < 768) begin
 			#1; sck = 1;
-			#1; hash[255-i] = sdo;
+			#1; hash[767-i] = sdo;
 			#4; sck = 0;
 			i = i + 1;
 		
