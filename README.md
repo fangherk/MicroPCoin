@@ -46,5 +46,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 * [Bitcoin Protocol](https://bitcoin.org/bitcoin.pd://bitcoin.org/bitcoin.pdf) - The Original Satoshi Nakomoto Paper
-* [SHA-Algorithm](https://csrc.nist.gov/csrc/media/publications/fips/197/final/documents/fips-197.pdf) - The implementation of the Cryptocurrency Protocol
+* [SHA-Algorithm](https://csrc.nist.gov/csrc/media/publications/fips/180/4/final/documents/fips180-4-draft-aug2014.pdf) - The implementation of the Cryptocurrency Protocol
 * [Mastering Bitcoin](https://github.com/bitcoinbook/bitcoinbook) - Descriptions of the Bitcoin Protocol
