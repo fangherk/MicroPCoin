@@ -138,8 +138,8 @@ module uPcoin_core(input logic clk,
 
   // Set falling/rising block and message signals;
   logic falling_edge_block, rising_edge_block, falling_edge_message;
-  // Set up the round numbers and counter
-  logic [5:0] roundNumber, messageScheduleCounter;
+  // Set up the round numbers counter
+  logic [5:0] roundNumber;
   // Set up counters for preparing the message schedule
   logic [3:0] counter3, counter2, next14, next9, next1, next15;
   // Store the intermediate hash value for future updating
@@ -199,12 +199,8 @@ module uPcoin_core(input logic clk,
   // Set up the intermediate values for the intermediate steps
   always_ff @(posedge clk)
     begin
-      if (state == intermediateStep)      roundNumber <=0;
+      if (state == intermediateStep)      roundNumber <= 0;
       else                                roundNumber <= roundNumber + 1;
-
-      if(state == preProcessing)          messageScheduleCounter <= 0;
-      else if(state == intermediateStep)  messageScheduleCounter <= messageScheduleCounter + 1;
-      else                                messageScheduleCounter <= messageScheduleCounter;
 
       if(state == intermediateStep)       counter2 <= 0;
       else if(state == thirdStep)         counter2 <= counter2 + 1;
