@@ -138,8 +138,10 @@ module uPcoin_core(input logic clk,
 		if (message_load) state <= preProcessing;
 		else begin
 			state <= nextstate;
-			if(nextstate == waiting) begin
-				intermediate_hash <= {new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h} + intermediate_hash;
+			if(nextstate == prepareMessageStep) begin
+				intermediate_hash <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
+			end else if(nextstate == thirdStep) begin
+				intermediate_hash <= {new_a, new 	_b, new_c, new_d, new_e, new_f, new_g, new_h} + intermediate_hash;
 			end else begin
 				intermediate_hash <= intermediate_hash;
 			end
@@ -224,7 +226,7 @@ module uPcoin_core(input logic clk,
 		
 	getConstant kHelper(roundNumber, K);
 	prepareMessage ppM(W[counter2-2], W[counter2-7], W[counter2-15], W[counter2-16], newW);
-	thirdComp(a,b,c,d,e,f,g,h,W[roundNumber],K, new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);
+	thirdComp  noob(a,b,c,d,e,f,g,h,W[roundNumber],K, new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);
 
 	assign {a,b,c,d,e,f,g,h} = intermediate_hash;
 	assign done = (state==doneHashing);
