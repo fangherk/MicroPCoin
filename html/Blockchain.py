@@ -153,11 +153,47 @@ class Blockchain:
         """
         TODO: fix
         """
+        # check the transaction
+        transaction.check()
+
+        for each in self.transactions:
+            if(each.id == transaction.id):
+                raise ValueError("New transaction is already existed in the blockchain")
+        
+        # TODO: need to revisit this checking
+        for inputTransaction in transaction.data["inputs"]:
+            for block in self.blocks:
+                for previousTransaction in block.transacations.data["input"]:
+                    if(inputTransaction["index"] == previousTransaction["index"] and\
+                       inputTransaction["transaction"] == previousTransaction["transaction"]):
+                       raise ValueError("transaction is already spent")
+
         return True
 
-    def getUnspentTransactionsForAddress(address):
+    def getUnspentTransactionsForAddress(self, address):
         """
         TODO: fix
         """
-        return []
+        inputs = []
+        outputs = []
+        for block in self.blocks:
+            for transactionOutput in block.transacations.data["outputs"]:
+                if transactionOutput["address"] == address:
+                    outputs.append(transactionOutput)
+            for transactionInput in block.transacations.data["inputs"]:
+                if transactionInput["address"] == address:
+                    inputs.append(transactionInput)
+            
+        unspentTransactionOutput = []
+        for outputTransaction in outputs:
+            found = False
+            for inputTransaction in inputs:
+                if(inputTransaction["transaction"] == outputTransaction["transaction"] and \
+                   inputTransaction["index"] == outputTransaction["index"]):
+                   found = True
+                   break
+            if(not found):
+                unspentTransactionOutput.append(outputTransaction)
+        return unspentTransactionOutput
+        
     
