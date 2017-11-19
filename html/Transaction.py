@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 FEE_PER_TRANSACTION = 1
 
@@ -11,6 +12,9 @@ class Transaction:
             "inputs": [],
             "outputs": []
         }
+
+    def __repr__(self):
+        return json.dumps(self.__dict__)
     
     def toHash(self):
         strInput = str(self.id) + str(self.type) + str(self.data)

@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 class Block:
     def __init__(self):
@@ -9,6 +10,9 @@ class Block:
         self.transactions = []          # list of transactions inside the block
         self.hash = ""                  # hash taken from the contents of the block:
                                         # sha256(index + previousHash + timestamp + nonce + transactions)
+
+    def __repr__(self):
+        return json.dumps(self.__dict__)
 
     def getDifficulty(self):
         return int(self.hash, 14)
