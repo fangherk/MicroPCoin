@@ -5,6 +5,9 @@ FEE_PER_TRANSACTION = 1
 
 class Transaction:
     def __init__(self):
+        """
+        Constructor for a transaction.
+        """
         self.id = None
         self.hash = None
         self.type = None
@@ -14,13 +17,25 @@ class Transaction:
         }
 
     def __repr__(self):
+        """
+        String representation for a transaction
+        """
         return json.dumps(self.__dict__)
     
     def toHash(self):
+        """
+        Compute hash for the transaction
+        """
         strInput = str(self.id) + str(self.type) + str(self.data)
         return hashlib.sha256(strInput.encode('utf-8')).hexdigest()
 
     def check(self):
+        """
+        Check that the transaction is valid, e.g. signed by the correct 
+        individual.
+        """
+
+        # Check if the computed hash matches the transaction's hash.
         transactionHash = self.toHash()
         if(transactionHash != self.hash):
             raise ValueError("hash value of transaction error")
@@ -33,12 +48,13 @@ class Transaction:
             address = inputTransaction["address"]
             signature = inputTransaction["signature"]
 
-            # Verify that 
+            # TODO: Verify that the message is signed by the correct individual.
             publicKey = address
             messageHash = str(transactionHash) + str(index) + str(address)
-
             # verify(publicKey, signature, messageHash) must be true
 
+        # Check if the sum of input transactions are enough for the sum of output transactions
+        # plus fee.
         if self.type == "regular":
             sumOfInputsAmount = 0
             sumOfOutputsAmount = 0
@@ -57,6 +73,9 @@ class Transaction:
         return True
 
 def createTransaction(data):
+    """
+    Create a transaction.
+    """
     transaction = Transaction()
     transaction["id"] = data["id"]
     transaction["type"] = data["type"]

@@ -42,34 +42,43 @@ def latest_blocks():
         blockToAdd.timestamp = inputJSON["timestamp"]
         blockToAdd.transactions = inputJSON["transactions"]
         blockToAdd.hash = blockToAdd.toHash()
-        output = blockchain.addBlock(blockToAdd)
-        return str(output)
+        return str(blockchain.addBlock(blockToAdd))
 
 @uPCoin.route('/blockchain/blocks/hash/<hash_val>', methods=['GET'])
 def get_block_by_hash(hash_val):
-    # TODO: Set up Error Handling
+    # Return a block with specified hash
     if request.method == 'GET':
-        return blockchain.getBlockByHash(hash_val)
+        return str(blockchain.getBlockByHash(hash_val))
 
 @uPCoin.route('/blockchain/blocks/index/<index_val>', methods=['GET'])
 def get_block_by_index(index_val):
-    # TODO: Set up Error Handling
+    # Return a block with specified index
     if request.method == 'GET':
-        return blockchain.getBlockByIndex(index_val)
+        index_val = int(index_val)
+        return str(blockchain.getBlockByIndex(index_val))
 
 @uPCoin.route('/blockchain/blocks/transactions/<transactionId_val>', methods=['GET'])
 def get_transaction(transactionId_val):
-    # TODO: Set up Error Handling
+    # Return transaction by id
     if request.method == 'GET':
-        return blockchain.getTransactionById(transactionId_val)
+        return str(blockchain.getTransactionById(transactionId_val))
     
 @uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
 def transaction(transactionId_val):
-    # TODO: Set up transactions for the blockchain 
     if request.method == 'GET':
-        return blockchain.getAllTransactions()
+        # Return all transactions
+        return str(blockchain.getAllTransactions())
     elif request.method == 'POST':
-        return blockchain.addTransaction(request.json)
+        # TODO: Test add transaction
+        return str(blockchain.addTransaction(request.json))
+
+@uPcoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
+def get_unspent_transactions(address):
+    if request.method == 'GET':
+        # Get all unspent transactions from the given address
+        # TODO: Test
+        return str(Blockchain.getUnspentTransactionsForAddress(address))
+
 """"""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""
