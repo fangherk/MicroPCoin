@@ -48,13 +48,13 @@ def get_block_by_index(index_val):
     if request.method == 'GET':
         return blockchain.getBlockByIndex(index_val)
 
-@uPCoin.route('/blockhain/blocks/transactions/<transactionId_val>', methods=['GET'])
+@uPCoin.route('/blockchain/blocks/transactions/<transactionId_val>', methods=['GET'])
 def get_transaction(transactionId_val):
     # TODO: Set up Error Handling
     if request.method == 'GET':
         return blockchain.getTransactionById(transactionId_val)
     
-@uPCoin.route('/blockhain/transactions', methods=['GET', 'POST'])
+@uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
 def transaction(transactionId_val):
     # TODO: Set up transactions for the blockchain 
     if request.method == 'GET':
