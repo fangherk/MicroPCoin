@@ -3,7 +3,7 @@ import pickle
 
 POW_CURVE = 5
 EVERY_X_BLOCKS = 5
-BASE_DIFFICULTY = 100 # TODO: https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
+BASE_DIFFICULTY = 1e9 # TODO: https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
 
 class Blockchain:
     def __init__(self, dbName, transactionsDbName, init=True):
@@ -70,7 +70,7 @@ class Blockchain:
 
     def checkChain(self, chain):
         # Check if the genesis block is the same
-        if(self.blocks[0] != newChain.blocks[0]):
+        if(self.blocks[0] != chain.blocks[0]):
             raise ValueError("Genesis blocks aren't the same")
 
         for idx in range(len(chain.blocks) - 1):
@@ -111,11 +111,53 @@ class Blockchain:
         
         
     def checkBlock(self, newBlock, previousBlock):
-        pass
+        newBlockHash = newBlock.toHash()
+
+        if(previousBlock.index + 1 != newBlock.index):
+            raise ValueError("Expect new block of id = previous id + 1")
+        if(previousBlock.hash != newBlock.previousHash):
+            raise ValueError("Expect new block's previous hash to match")
+        if(newBlock.hash != newBlockHash):
+            raise ValueError("Expect new block's hash to match the calculation")
+        if(newBlock.getDifficulty() >= self.getDifficulty(newBlock.index)):
+            raise ValueError("Expect new block's difficulty to be smalle")
+
+        # check all transacations        
+        for transaction in newBlock.transactions:
+            self.checkTransaction(transaction)
+
+        sumOfInputsAmount = 0
+        sumOfOutputsAmount = 0
+        nfeeTransactions = 0
+        nrewardTransactions = 0
+        for transaction in newBlock.transacations:
+            nfeeTransactions += (transaction.type == "fee")
+            nrewardTransactions += (transaction.type == "reward")
+            for inputTransaction in transaction.data["input"]:
+                sumOfInputsAmount += inputTransaction["amount"]
+            for outputTransaction in transaction.data["output"]:
+                sumOfOutputsAmount += outputTransaction["amount"]
+
+        if(sumOfInputsAmount < sumOfOutputsAmount):
+            raise ValueError("Expect sum of input transactions to be greater than the sum of output transactions")
+
+        if(nfeeTransactions > 1):
+            raise ValueError("Expect to have only 1 fee transaction")      
+        
+        if(nrewardTransactions > 1):
+            raise ValueError("Expect to have only 1 reward transaction")
+
+        return True
 
     def checkTransaction(self, transaction):
-        pass
+        """
+        TODO: fix
+        """
+        return True
 
     def getUnspentTransactionsForAddress(address):
-        pass
+        """
+        TODO: fix
+        """
+        return []
     
