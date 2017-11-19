@@ -15,7 +15,7 @@ class Block:
         return json.dumps(self.__dict__)
 
     def getDifficulty(self):
-        return int(self.hash, 14)
+        return int(self.hash[:14], 16)
 
     def toHash(self):
         strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.nonce) + str(self.transactions)
