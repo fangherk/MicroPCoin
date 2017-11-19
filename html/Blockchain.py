@@ -99,7 +99,7 @@ class Blockchain:
         newtransactions = []
         for transaction in self.transactions:
             found = False
-            for transactionBlock in self.newBlock:
+            for transactionBlock in newBlock:
                 if transaction.id == transactionBlock.id:
                     found = True
                     continue
