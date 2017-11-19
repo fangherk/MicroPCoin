@@ -4,7 +4,7 @@ import json
 class Block:
     def __init__(self):
         self.index = 0                  # block index (first block = 0)
-        self.previousHash = ""          # hash of previous block (first block = 0) (512bits)
+        self.previousHash = "0"          # hash of previous block (first block = 0) (512bits)
         self.timestamp = 0              # POSIX time 
         self.nonce = 0                  # nonce used to identify the proof-of-work step
         self.transactions = []          # list of transactions inside the block
@@ -15,7 +15,7 @@ class Block:
         return json.dumps(self.__dict__)
 
     def getDifficulty(self):
-        return int(self.hash[:14], 16)
+        return int(self.hash[:13], 16)
 
     def toHash(self):
         strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.nonce) + str(self.transactions)
@@ -24,8 +24,9 @@ class Block:
 def getGenesis():
     block = Block()
     block.index = 0
-    block.previousHash = "0" * 64
-    block.timestamp = 1465154705
+    block.previousHash = "0"
+    block.timestamp = 146515470
     block.nonce = 0
     block.transactions = []
+    block.hash = block.toHash()
     return block 

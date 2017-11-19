@@ -55,3 +55,11 @@ class Transaction:
                 raise ValueError("Not enough fee")
 
         return True
+
+def createTransaction(data):
+    transaction = Transaction()
+    transaction["id"] = data["id"]
+    transaction["type"] = data["type"]
+    transaction["data"] = data["data"]
+    transaction.hash = transaction.toHash()
+    return transaction

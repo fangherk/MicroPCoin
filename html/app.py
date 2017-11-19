@@ -1,6 +1,8 @@
 """ Library Imports """
 from flask import Flask, jsonify, request
+from flask.json import loads
 
+import json
 import Block
 import Blockchain
 
@@ -23,18 +25,25 @@ def index():
 
 @uPCoin.route('/blockchain/blocks', methods=['GET'])
 def get_blocks():
-    # TODO: Return block listing of all blocks and choose format
-    print(type(blockchain.getAllBlocks()))
-    return str(list(blockchain.getAllBlocks()))
+    # Return all blocks in JSON format
+    return str(blockchain.getAllBlocks())
 
 @uPCoin.route('/blockchain/blocks/latest', methods=['GET', 'PUT'])
 def latest_blocks():
     if request.method == 'GET':
-        # TODO: Return latest block in ? format
+        # Return latest block in JSON format
         return str(blockchain.getLastBlock())
     elif request.method == 'PUT':
-        # TODO: Parse the Json Put Request and add it to the blockchain
-        return jsonify(request.json)
+        # Parse the JSON Put Request and add it to the blockchain
+        inputJSON = request.json
+        blockToAdd = Block.Block()
+        blockToAdd.index = inputJSON["index"]
+        blockToAdd.previousHash = inputJSON["previousHash"]
+        blockToAdd.timestamp = inputJSON["timestamp"]
+        blockToAdd.transactions = inputJSON["transactions"]
+        blockToAdd.hash = blockToAdd.toHash()
+        output = blockchain.addBlock(blockToAdd)
+        return str(output)
 
 @uPCoin.route('/blockchain/blocks/hash/<hash_val>', methods=['GET'])
 def get_block_by_hash(hash_val):
@@ -66,4 +75,4 @@ def transaction(transactionId_val):
 """"""""""""""""""""""""""""""""""""
 
 if __name__=='__main__':
-    uPCoin.run(debug=True, host='134.173.211.84')
+    uPCoin.run(debug=True, host='192.168.0.200')

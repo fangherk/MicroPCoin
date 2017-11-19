@@ -1,9 +1,10 @@
 import Block
 import pickle
+import json
 
 POW_CURVE = 5
 EVERY_X_BLOCKS = 5
-BASE_DIFFICULTY = 1e9 # TODO: https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
+BASE_DIFFICULTY = 9007199254740991  # TODO: https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
 
 class Blockchain:
     def __init__(self, dbName, transactionsDbName, init=True):
@@ -25,6 +26,9 @@ class Blockchain:
             self.blocks = blockDb
             self.transactions = transactionsDb
 
+    def __repr__(self):
+        return json.dumps(self.__dict__)
+    
     def getAllBlocks(self):
         return self.blocks
 
@@ -48,7 +52,7 @@ class Blockchain:
         TODO: Understand this formula
         https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
         """
-        return max(int(BASE_DIFFICULTY / ((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) ** POW_CURVE)), 0)
+        return max(int(BASE_DIFFICULTY / (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)), 0)
 
     def getAllTransactions(self):
         return self.transactions
@@ -131,7 +135,8 @@ class Blockchain:
         if(newBlock.hash != newBlockHash):
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() >= self.getDifficulty(newBlock.index)):
-            raise ValueError("Expect new block's difficulty to be smalle")
+            raise ValueError("Expect new block's difficulty to be smaller \
+                              [newBlock.diif = {:}] [{:}]".format(newBlock.getDifficulty(), self.getDifficulty(newBlock.index)))
 
         # check all transacations        
         for transaction in newBlock.transactions:
@@ -141,7 +146,7 @@ class Blockchain:
         sumOfOutputsAmount = 0
         nfeeTransactions = 0
         nrewardTransactions = 0
-        for transaction in newBlock.transacations:
+        for transaction in newBlock.transactions:
             nfeeTransactions += (transaction.type == "fee")
             nrewardTransactions += (transaction.type == "reward")
             for inputTransaction in transaction.data["input"]:
