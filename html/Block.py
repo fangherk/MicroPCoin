@@ -1,3 +1,5 @@
+import hashlib
+
 class Block:
     def __init__(self):
         self.index = 0                  # block index (first block = 0)
@@ -7,6 +9,10 @@ class Block:
         self.transactions = []          # list of transactions inside the block
         self.hash = ""                  # hash taken from the contents of the block:
                                         # sha256(index + previousHash + timestamp + nonce + transactions)
+
+    def toHash(self):
+        strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.nonce) + str(self.transactions)
+        return hashlib.sha256(strInput.encode('utf-8')).hexdigest()
 
 def getGenesis():
     block = Block()
