@@ -66,7 +66,18 @@ class Blockchain:
         raise ValueError("Transaction with id={:} not found".format(transactionId))
 
     def replaceChain(self, newChain):
-        pass
+        if(len(newChain.blocks) <= len(self.blocks)):
+            raise ValueError("New blockchain is shorter than the current blockchain")
+
+        self.checkChain(newChain)
+
+        lastN = len(newChain.blocks) - len(self.blocks)
+        newBlocks = newChain.blocks[-lastN:]
+
+        for blockToAdd in newBlocks:
+            self.addBlock(blockToAdd)
+            
+        # TODO: send signal saying that the blockchain has been replaced.
 
     def checkChain(self, chain):
         # Check if the genesis block is the same
