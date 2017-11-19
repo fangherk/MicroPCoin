@@ -10,6 +10,9 @@ class Block:
         self.hash = ""                  # hash taken from the contents of the block:
                                         # sha256(index + previousHash + timestamp + nonce + transactions)
 
+    def getDifficulty(self):
+        return int(self.hash, 14)
+
     def toHash(self):
         strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.nonce) + str(self.transactions)
         return hashlib.sha256(strInput.encode('utf-8')).hexdigest()
