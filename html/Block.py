@@ -44,4 +44,9 @@ def getGenesis():
     block.nonce = 0
     block.transactions = []
     block.hash = block.toHash()
-    return block 
+    return block
+
+def createBlock(data):
+    """
+    Create a block from JSON object
+    """ 
