@@ -1,5 +1,6 @@
 import hashlib, binascii
 import nacl.encoding, nacl.signing
+import json
 
 class Wallet:
     def __init__(self, wallet_id, passwordHash, secret=None, keypairs=None):
@@ -8,6 +9,9 @@ class Wallet:
         self.passwordHash = passwordHash
         self.secret = secret
         self.keypairs = []
+
+    def __repr__(self):
+        return json.dumps(self.__dict__)
 
     def generateAddress(self):
         """ Generate an Address based on the secret """ 
