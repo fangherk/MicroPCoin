@@ -14,7 +14,10 @@ class Wallet:
         self.keypairs = []  
 
     def __repr__(self):
-        return json.dumps(self.__dict__)
+        # jsonDumper is used for recursively converting an object to correct JSON output format
+        def jsonDumper(obj):
+            return obj.__dict__
+        return json.dumps(self, default=jsonDumper)
 
     def generateAddress(self):
         """ 

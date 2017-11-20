@@ -18,8 +18,10 @@ class Block:
         """
         String representation of block
         """
-        # TODO: Make it to be valid json object.
-        return json.dumps(str(self.__dict__))
+        # jsonDumper is used for recursively converting an object to correct JSON output format
+        def jsonDumper(obj):
+            return obj.__dict__
+        return json.dumps(self, default=jsonDumper)
 
     def getDifficulty(self):
         """
