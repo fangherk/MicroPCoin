@@ -45,21 +45,30 @@ class Operator:
     def getWalletById(self, walletId):
         for wallet in self.wallets:
             if wallet.id == walletId:
+                print(wallet)
                 return wallet
 
         raise ValueError("Wrong wallet id")
 
     def generateAddressForWallet(self, walletId):
-        for idx, wallet in enumerate(self.wallets):
-            if wallet.id == walletId:
-                temp_wallet = wallet 
-                temp_idx = idx
-        if not temp_wallet and not idx: 
-            address = temp_wallet.generateAddress()
-            self.wallets[temp_idx] = temp_wallet
-            pickle.dump(self.wallets, open(self.dbName, "wb"))
-            return address
-        raise ValueError("Cannot find address")
+        # Finde the wallet ID in the data structure
+        targetIdx = None
+        for idx in range(len(self.wallets)):
+            if self.wallets[idx].id == walletId:
+                targetIdx = idx
+
+        # Raise an error if not found
+        if targetIdx is None:
+            raise ValueError("Cannot find address")
+        
+        # Generate a new address
+        address = self.wallets[targetIdx].generateAddress()
+
+        # Write to the database
+        pickle.dump(self.wallets, open(self.dbName, "wb"))
+
+        # Return a generated address
+        return address
 
 
     def getAddressesForWallet(self, walletId):

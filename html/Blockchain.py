@@ -271,16 +271,17 @@ class Blockchain:
         outputs = []
         # Obtain a list of input/output transactions for the given address
         for block in self.blocks:
-            idx = 0
-            for transactionOutput in block.transacations.data["outputs"]:
-                if transactionOutput["address"] == address:
-                    transactionOutput["transaction"] = block.transactions.id;
-                    transactionOutput["index"] = idx
-                    outputs.append(transactionOutput)
-                    idx += 1
-            for transactionInput in block.transacations.data["inputs"]:
-                if transactionInput["address"] == address:
-                    inputs.append(transactionInput)
+            for transaction in block.transactions:
+                idx = 0
+                for transactionOutput in transaction.data["outputs"]:
+                    if transactionOutput["address"] == address:
+                        transactionOutput["transaction"] = transaction.id;
+                        transactionOutput["index"] = idx
+                        outputs.append(transactionOutput)
+                        idx += 1
+                for transactionInput in transaction.data["inputs"]:
+                    if transactionInput["address"] == address:
+                        inputs.append(transactionInput)
             
         # Remove any output transaction that is also in the input transactions' list.
         unspentTransactionOutput = []

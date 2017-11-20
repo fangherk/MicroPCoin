@@ -135,15 +135,35 @@ def createTransaction(walletId):
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):
     if request.method == "GET":
-        pass
+        # Get all addresses of a wallet
+        return str(operator.getAddressesForWallet(walletId))
     elif request.method == "POST":
-        pass
+        # Create a new address
+
+        # Obtain relevant data:
+        #   password
+        jsonData = json.loads(request.data)
+        password = jsonData["password"]
+
+        # Compute the hash of the provided password
+        passwordHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+         # Check if the password hash is the same with the stored password hash
+        if not operator.checkWalletPassword(walletId, passwordHash):
+            # TODO: Change to 403 Error
+            return "Error"
+
+        newAddress = operator.generateAddressForWallet(walletId)
+        print(type(newAddress))
+        return str(json.dumps({"address": newAddress}))
+
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET'])
 def getBalance(walletId, addressId):
     if request.method == "GET":
-        pass
-
+        # Get a balance for the specified addressId and walletId
+        balance = operator.getBalanceForAddress(addressId)
+        return str(json.dumps({"balance": balance}))
 
 """
 Node
