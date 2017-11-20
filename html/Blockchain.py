@@ -80,8 +80,10 @@ class Blockchain:
 
         Note: This formula is taken from 
         https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
+
+        Note2: Readjust the original formula so that the difficulty is incraesing instead of decreasing.
         """
-        return max(int(BASE_DIFFICULTY / (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)), 0)
+        return (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)
 
     def getAllTransactions(self):
         """
@@ -211,8 +213,8 @@ class Blockchain:
             raise ValueError("Expect new block's previous hash to match newBlock.previousHash={:}, previousBlock.hash={:}".format(newBlock.previousHash, previousBlock.hash))
         if(newBlock.hash != newBlockHash):
             raise ValueError("Expect new block's hash to match the calculation")
-        if(newBlock.getDifficulty() >= self.getDifficulty(newBlock.index)):
-            raise ValueError("Expect new block's difficulty to be smaller \
+        if(newBlock.getDifficulty() <= self.getDifficulty(newBlock.index)):
+            raise ValueError("Expect new block's difficulty to be larger \
                               [newBlock.diif = {:}] [{:}]".format(newBlock.getDifficulty(), self.getDifficulty(newBlock.index)))
 
         # Check that all transacations are valid
