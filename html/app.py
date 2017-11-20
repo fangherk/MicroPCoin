@@ -86,9 +86,37 @@ def get_unspent_transactions(address):
 """"""""""""""""""""""""""""""""""""
 
 @uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
-def wallets(passw=None):
-     if request.method == 'GET':
-        return operator.getWallets() 
+def wallets(passwd=None):
+    if request.method == 'GET':
+        return str(operator.getWallets())
+    elif request.method == "POST":
+        # TODO: Create a wallet from a password
+        pass
+
+@uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
+def getWalletById(walletId):
+    if request.method == "GET":
+        pass
+
+@uPCoin.route('/operator/wallets/<walletId>/transactions', methods=['POST'])
+def createTransaction(walletId):
+    if request.method == "POST":
+        pass
+
+@uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
+def addressesWallet(walletId):
+    if request.method == "GET":
+        pass
+    elif request.method == "POST":
+        pass
+
+@uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET'])
+def getBalance(walletId, addressId):
+    if request.method == "GET":
+        pass
+
+
+
 
 if __name__=='__main__':
     uPCoin.run(debug=True, host='134.173.38.172')
