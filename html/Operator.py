@@ -32,7 +32,7 @@ class Operator:
         wallet = Wallet.Wallet(secrets.token_hex(32), hashH)
         return self.addWallet(wallet)
 
-    def checkWalletPassword(self, walletId, hashH):
+    def checkWalletPassword(self, walletId, passwordHash):
         wallet = self.getWalletById(walletId)
         if wallet == None:
             raise ValueError("Wallet Not Found")

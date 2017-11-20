@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, request
 from flask.json import loads
 
+import hashlib
 import json
 import Block
 import Blockchain
@@ -85,8 +86,10 @@ Operator
 @uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
 def wallets():
     if request.method == 'GET':
+        # Get all wallets
         return str(operator.getWallets())
     elif request.method == "POST":
+        # Create a wallet using the specified password
         jsonData = json.loads(request.data)
         password = jsonData["password"]
         return str(operator.createWalletFromPassword(password))
@@ -94,12 +97,40 @@ def wallets():
 @uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
 def getWalletById(walletId):
     if request.method == "GET":
-        pass
+        # Get a wallet by the specified ID
+        return str(operator.getWalletById(walletId))
 
 @uPCoin.route('/operator/wallets/<walletId>/transactions', methods=['POST'])
 def createTransaction(walletId):
+    # Create a transaction
     if request.method == "POST":
-        pass
+        # Obtain relevant data:
+        #   password, fromAddress, toAddress, amount, changeAddress
+        jsonData = json.loads(request.data)
+        password = jsonData["password"]
+        fromAddress = jsonData["from"]
+        toAddress = jsonData["to"]
+        amount = jsonData["amount"]
+        changeAddress = jsonData["changeAddress"]
+
+        # Compute the hash of the provided password
+        passwordHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+        # Check if the password hash is the same with the stored password hash
+        if not operator.checkWalletPassword(walletId, passwordHash):
+            # TODO: Change to 403 Error
+            return "Error"
+
+        # Create a transaction 
+        newTransaction = operator.createTransaction(walletId, fromAddress, toAddress, amount, changeAddress)
+        
+        # Check if the transaction is signed correctly
+        newTransaction.check()
+
+        # Add thte transaction to the list of pending transaction
+        transcationCreated = blockchain.addTransaction(Transaction.createTransaction(newTransaction))
+
+        return str(transcationCreated)
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):
