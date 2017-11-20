@@ -38,7 +38,6 @@ class Wallet:
             temp_secret = self.secret
             seed = self.generateSecret(temp_secret)
 
-        print(type(seed))
         key_pair = self.generateKeyPair(seed) 
         new_key_pair = {"index":        len(self.keypairs) +  1,
                         "secret_key":   key_pair["secret_key"],

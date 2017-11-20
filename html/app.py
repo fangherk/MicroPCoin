@@ -7,6 +7,7 @@ import json
 import Block
 import Blockchain
 import Operator
+import Miner
 
 """ --------------- """
 """ --------------- """
@@ -14,6 +15,7 @@ import Operator
 uPCoin = Flask(__name__)
 blockchain = Blockchain.Blockchain("blockchainDb", "transactionDb")
 operator = Operator.Operator('walletDb', blockchain)
+miner = Miner.Miner(blockchain, None)
 
 """ Main Page """
 @uPCoin.route('/')
@@ -186,8 +188,22 @@ Miner
 """
 @uPCoin.route('/miner/mine', methods=['POST'])
 def mine():
+    # Mine a new block
     if request.method == 'POST':
-        pass
+        # Obtain relevant data:
+        #   rewardAddress
+        jsonData = json.loads(request.data)
+        rewardAddress = jsonData["rewardAddress"]
+
+        # Mine with the reward address
+        newBlock = miner.mine(rewardAddress)
+
+        # When this function call succeeds, it adds the block to the blockchain
+        blockchain.addBlock(newBlock);
+
+        # Output the just created block
+        return str(newBlock)
+
 
 if __name__=='__main__':
     uPCoin.run(debug=True, host='134.173.38.172')

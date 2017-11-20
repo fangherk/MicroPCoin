@@ -45,7 +45,6 @@ class Operator:
     def getWalletById(self, walletId):
         for wallet in self.wallets:
             if wallet.id == walletId:
-                print(wallet)
                 return wallet
 
         raise ValueError("Wrong wallet id")

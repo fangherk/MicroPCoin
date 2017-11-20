@@ -18,7 +18,7 @@ class Block:
         """
         String representation of block
         """
-        return json.dumps(self.__dict__)
+        return json.dumps(str(self.__dict__))
 
     def getDifficulty(self):
         """

@@ -81,8 +81,8 @@ def createTransaction(data):
     Create a transaction from JSON object.
     """
     transaction = Transaction()
-    transaction["id"] = data["id"]
-    transaction["type"] = data["type"]
-    transaction["data"] = data["data"]
+    transaction.id = data["id"]
+    transaction.type = data["type"]
+    transaction.data = data["data"]
     transaction.hash = transaction.toHash()
     return transaction

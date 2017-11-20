@@ -2,17 +2,27 @@ import Block
 import Transaction
 import time
 import secrets
+import threading
+import queue
 
 FEE_PER_TRANSACTION = 1
 MINING_REWARD = 5000000000
+
 
 class Miner:
     def __init__(self, blockchain, logLevel):
         self.blockchain = blockchain
         self.logLevel = logLevel
+        self.threadQueue = queue.Queue()
 
     def mine(self, address):
         baseBlock = self.generateNextBlock(address, self.blockchain.getLastBlock(), self.blockchain.transactions)
+        thr = threading.Thread(target=self.proveWorkFor, args=(baseBlock, baseBlock.getDifficulty(),))
+        thr.start()
+        thr.join()
+        output = self.threadQueue.get()
+        return output
+
 
     def generateNextBlock(self, address, previousBlock, blockchainTransactions):
         index = previousBlock.index + 1
@@ -37,7 +47,7 @@ class Miner:
                 }]
             }
             feeTransaction = Transaction.createTransaction(data)
-            transactions.push(feeTransaction)
+            transactions.append(feeTransaction)
 
         # Rewrad transaction
         if address != None:
@@ -53,7 +63,7 @@ class Miner:
                 }]
             }
             rewardTransaction = Transaction.createTransaction(data)
-            transactions.push(rewardTransaction)
+            transactions.append(rewardTransaction)
 
         return Block.createBlock({"index": index,
                                   "nonce": 0,
@@ -64,7 +74,7 @@ class Miner:
 
     def proveWorkFor(self, jsonBlock, difficulty):
         blockDifficulty = None
-        block = Block.createBlock(jsonBlock)
+        block = Block.createBlock(jsonBlock.__dict__)
 
         while True:
             block.timestamp = int(time.time())
@@ -73,4 +83,6 @@ class Miner:
             blockDifficulty = block.getDifficulty()
             if blockDifficulty < difficulty: break
 
+        print("Finish block = ", type(block), str(block))
+        self.threadQueue.put(block)
         return block
