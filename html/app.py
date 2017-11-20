@@ -2,12 +2,16 @@
 from flask import Flask, jsonify, request
 from flask.json import loads
 
+import os
 import hashlib
 import json
 import Block
 import Blockchain
 import Operator
 import Miner
+import Node
+
+
 
 """ --------------- """
 """ --------------- """
@@ -16,6 +20,7 @@ uPCoin = Flask(__name__)
 blockchain = Blockchain.Blockchain("blockchainDb", "transactionDb")
 operator = Operator.Operator('walletDb', blockchain)
 miner = Miner.Miner(blockchain, None)
+node = Node.Node(os.environ["ip"], os.environ["port"], [], blockchain)
 
 """ Main Page """
 @uPCoin.route('/')
@@ -170,18 +175,20 @@ def getBalance(walletId, addressId):
 """
 Node
 """
-@uPCoin.route('/node/peers/', methods=['GET', 'POST'])
+@uPCoin.route('/node/peers', methods=['GET', 'POST'])
 def peers():
     if request.method == 'GET':
-        pass
+        return str(node.peers)
     elif request.method == "POST":
-        pass
+        jsonData = json.loads(request.data)
+        newPeer = node.connectToPeer(jsonData["peer"])
+        return str(newPeer)
 
 
 @uPCoin.route('/node/transactions/<transactionId>/confirmations', methods=['GET'])
 def getComfirmations(transactionId):
     if request.method == 'GET':
-        pass
+        node.getConfirmations(transactionId)
 
 """
 Miner
@@ -206,4 +213,4 @@ def mine():
 
 
 if __name__=='__main__':
-    uPCoin.run(debug=True, host='134.173.38.172')
+    uPCoin.run(debug=True, host=os.environ["ip"])
