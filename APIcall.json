@@ -1,0 +1,447 @@
+{
+	"info": {
+		"name": "microPcoin",
+		"_postman_id": "7c3d052a-b9d6-1546-9102-9dbcacb2064a",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/operator/wallets create a wallet with the password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"password\": \"test\"\n}"
+				},
+				"url": {
+					"raw": "134.173.38.172:5000/operator/wallets",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"operator",
+						"wallets"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/operator/wallets/<ID> get wallet by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/operator/wallets/f786f6aafd813b2f7ccf8fabef5f67b1b9236bf96e6630f3f82b2d0594f7d0a6",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"operator",
+						"wallets",
+						"f786f6aafd813b2f7ccf8fabef5f67b1b9236bf96e6630f3f82b2d0594f7d0a6"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/operator/wallets/<ID>/addresses Get all addresses of a wallet",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/operator/wallets/723a34de299ecd4e1d90d2d48d822a73662b6015600afb8921c8e02db29c2a7d/addresses",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"operator",
+						"wallets",
+						"723a34de299ecd4e1d90d2d48d822a73662b6015600afb8921c8e02db29c2a7d",
+						"addresses"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/operator/wallets/<ID>/addresses Create a new address",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"password\": \"test\"\n}"
+				},
+				"url": {
+					"raw": "134.173.38.172:5000/operator/wallets/a5bf9ba873693164367b5ac965dc2e56732735635e19b028860b8a6083d1a686/addresses",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"operator",
+						"wallets",
+						"a5bf9ba873693164367b5ac965dc2e56732735635e19b028860b8a6083d1a686",
+						"addresses"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/operator/wallets/<ID>/addresses/<ID>/balance get balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/operator/wallets/b90764b858e4b5a317cea30845e17ee3cd4e03355bab3086ecd404cfb9ef6c46/addresses/6530626364656131656339303539366330646363386437656636623433303063/balance",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"operator",
+						"wallets",
+						"b90764b858e4b5a317cea30845e17ee3cd4e03355bab3086ecd404cfb9ef6c46",
+						"addresses",
+						"6530626364656131656339303539366330646363386437656636623433303063",
+						"balance"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/miner/mine Mining",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"rewardAddress\": \"e0bcdea1ec90596c0dcc8d7ef6b4300c\"\n}"
+				},
+				"url": {
+					"raw": "134.173.38.172:5000/miner/mine",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"miner",
+						"mine"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/operator/wallets Get all wallets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/operator/wallets",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"operator",
+						"wallets"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks get blockchain",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rewardAddress\": 6530626364656131656339303539366330646363386437656636623433303063\n}"
+				},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/latest Get latest block",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/latest",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"latest"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/latest Put the latest block",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/latest",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"latest"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/hash/<hash> Get block by hash",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/hash/<hash>",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"hash",
+						"<hash>"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/index/<index> Get block by index",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/index/<index>",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"index",
+						"<index>"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/transactions/<transactionId_val> get Transaction by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/transactions/<transactionId_val>",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"transactions",
+						"<transactionId_val>"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/transactions get all pending transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/transactions",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"transactions"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/blocks/transactions adding transaction",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/blocks/transactions",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"blocks",
+						"transactions"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/blockchain/transactions/unspent/<address> Get all unspent transaction from address",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "134.173.38.172:5000/blockchain/transactions/unspent/<address>",
+					"host": [
+						"134",
+						"173",
+						"38",
+						"172"
+					],
+					"port": "5000",
+					"path": [
+						"blockchain",
+						"transactions",
+						"unspent",
+						"<address>"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
