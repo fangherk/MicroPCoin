@@ -53,8 +53,6 @@ class Wallet:
 
         return keys
 
-        
-
     def generateSecret(self, secret, wallet_pass=False):
         """ Create a secret using a password hash based on PBKDF2."""
         secretX = hashlib.pbkdf2_hmac('sha256', secret.encode('utf-8'), b'salt', 100000)

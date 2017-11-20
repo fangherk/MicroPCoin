@@ -1,4 +1,6 @@
 import secrets
+import ed25519 # API Documentation is available at: https://github.com/warner/python-ed25519
+
 class TransactionBuilder:
     def __init__(self):
         self.listOfUTXO = None
@@ -28,6 +30,7 @@ class TransactionBuilder:
 
     def sign(self, secretKey):
         self.secretKey = secretKey
+        return self
 
     def type(self, typeT):
         self.typeW = typeT
@@ -52,18 +55,31 @@ class TransactionBuilder:
             secretX = hashlib.pbkdf2_hmac('sha256', inputStr.encode('utf-8'), b'salt', 100000)
             hexed  = binascii.hexlify(secretX)
             txiHash = hexed
-            utxo.signature =  "ttt"
+
+            # Create a signing key from secretkey
+            signing_key = ed25519.SigningKey(sefl.secretkey)
+
+            # Sign the transaction using the signing key
+            utxo.signature =  signing_key.sign(txiHash, encoding="hex")
+
             inputs.append(utxo)
 
         outputs = []
-        outputs.append({"amount":self.totalAmount,"address":self.outputAddress})
+        outputs.append({"amount":   self.totalAmount,
+                        "address":  self.outputAddress})
 
         if changeAmount > 0:
-            outputs.append({"amount": changeAmount,"address":self.outputAddress})
+            outputs.append({"amount":   changeAmount,
+                            "address":  self.outputAddress})
         else:
             raise ValueError("Sender does not have enough money to  send transaction"0
 
-        return json.dumps({"id": secrets.token_hex(32) , "hash": None, "type": self.typeW, "data": {"inputs": inputs, "outputs" :outputs}})
+        return Transaction.createTransaction({  "id": secrets.token_hex(32) , 
+                                                "hash": None, 
+                                                "type": self.typeW, 
+                                                "data": {   "inputs": inputs, 
+                                                            "outputs" :outputs}
+                                                })
         
 
 
