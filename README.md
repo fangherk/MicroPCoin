@@ -38,6 +38,8 @@ TODO
 ## Built With
 
 * [SystemVerilog](http://ieeexplore.ieee.org/document/6469140/) - The language used for the SHA-Algorithm.
+* [Python 3](https://www.python.org/) - HTTP Server Setup
+* C - Interfacing between Pi and FPGA.
 
 ## License
 
@@ -48,3 +50,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * [Bitcoin Protocol](https://bitcoin.org/bitcoin.pd://bitcoin.org/bitcoin.pdf) - The Original Satoshi Nakomoto Paper
 * [SHA-Algorithm](https://csrc.nist.gov/csrc/media/publications/fips/180/4/final/documents/fips180-4-draft-aug2014.pdf) - The implementation of the Cryptocurrency Protocol
 * [Mastering Bitcoin](https://github.com/bitcoinbook/bitcoinbook) - Descriptions of the Bitcoin Protocol
+* [Reference Implementation](https://github.com/conradoqg/naivecoin) - Cryptocurrency Implementation in Node.js in 1500 lines
