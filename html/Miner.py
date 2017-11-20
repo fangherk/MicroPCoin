@@ -26,7 +26,7 @@ class Miner:
 
     def generateNextBlock(self, address, previousBlock, blockchainTransactions):
         index = previousBlock.index + 1
-        previousHash = previousBlock.previousHash
+        previousHash = previousBlock.hash
         timestamp = int(time.time())
 
         transactions = []

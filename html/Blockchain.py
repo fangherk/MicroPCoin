@@ -5,6 +5,7 @@ import json
 POW_CURVE = 5
 EVERY_X_BLOCKS = 5
 BASE_DIFFICULTY = 9007199254740991  # Maximum Safe Integer for Javascript
+MINING_REWARD = 5000000000
 
 class Blockchain:
     def __init__(self, dbName, transactionsDbName, init=True):
@@ -204,7 +205,7 @@ class Blockchain:
         if(previousBlock.index + 1 != newBlock.index):
             raise ValueError("Expect new block of id = previous id + 1")
         if(previousBlock.hash != newBlock.previousHash):
-            raise ValueError("Expect new block's previous hash to match")
+            raise ValueError("Expect new block's previous hash to match newBlock.previousHash={:}, previousBlock.hash={:}".format(newBlock.previousHash, previousBlock.hash))
         if(newBlock.hash != newBlockHash):
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() >= self.getDifficulty(newBlock.index)):
@@ -225,13 +226,14 @@ class Blockchain:
         for transaction in newBlock.transactions:
             nfeeTransactions += (transaction.type == "fee")
             nrewardTransactions += (transaction.type == "reward")
-            for inputTransaction in transaction.data["input"]:
+            for inputTransaction in transaction.data["inputs"]:
                 sumOfInputsAmount += inputTransaction["amount"]
-            for outputTransaction in transaction.data["output"]:
+            for outputTransaction in transaction.data["outputs"]:
                 sumOfOutputsAmount += outputTransaction["amount"]
 
+        sumOfInputsAmount += MINING_REWARD
         if(sumOfInputsAmount < sumOfOutputsAmount):
-            raise ValueError("Expect sum of input transactions to be greater than the sum of output transactions")
+            raise ValueError("Expect sum of input transactions to be greater than the sum of output transactions, inputSum={:}, outputSum={:}".format(sumOfInputsAmount, sumOfOutputsAmount))
 
         if(nfeeTransactions > 1):
             raise ValueError("Expect to have only 1 fee transaction")      
