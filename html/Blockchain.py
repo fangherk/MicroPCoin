@@ -271,9 +271,13 @@ class Blockchain:
         outputs = []
         # Obtain a list of input/output transactions for the given address
         for block in self.blocks:
+            idx = 0
             for transactionOutput in block.transacations.data["outputs"]:
                 if transactionOutput["address"] == address:
+                    transactionOutput["transaction"] = block.transactions.id;
+                    transactionOutput["index"] = idx
                     outputs.append(transactionOutput)
+                    idx += 1
             for transactionInput in block.transacations.data["inputs"]:
                 if transactionInput["address"] == address:
                     inputs.append(transactionInput)
