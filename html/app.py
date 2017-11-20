@@ -5,12 +5,14 @@ from flask.json import loads
 import json
 import Block
 import Blockchain
+import Operator
 
 """ --------------- """
 """ --------------- """
 
 uPCoin = Flask(__name__)
 blockchain = Blockchain.Blockchain("test", "transactionsTest")
+operator = Operator.Operator()
 
 """ Main Page """
 @uPCoin.route('/')
@@ -64,7 +66,7 @@ def get_transaction(transactionId_val):
         return str(blockchain.getTransactionById(transactionId_val))
     
 @uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
-def transaction(transactionId_val):
+def transaction(transactionId_val=None):
     if request.method == 'GET':
         # Return all transactions
         return str(blockchain.getAllTransactions())
@@ -72,7 +74,7 @@ def transaction(transactionId_val):
         # TODO: Test add transaction
         return str(blockchain.addTransaction(request.json))
 
-@uPcoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
+@uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
 def get_unspent_transactions(address):
     if request.method == 'GET':
         # Get all unspent transactions from the given address
@@ -83,5 +85,10 @@ def get_unspent_transactions(address):
 """"""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""
 
+@uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
+def wallets(passw=None):
+     if request.method == 'GET':
+        return operator.getWallets() 
+
 if __name__=='__main__':
-    uPCoin.run(debug=True, host='192.168.0.200')
+    uPCoin.run(debug=True, host='134.173.38.172')

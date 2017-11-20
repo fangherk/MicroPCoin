@@ -2,17 +2,17 @@ import hashlib, binascii
 import nacl.encoding, nacl.signing
 
 class Wallet:
-    def __init__(self, wallet_id, password, secret=None, keypairs=None):
+    def __init__(self, wallet_id, passwordHash, secret=None, keypairs=None):
         """ Wallet Initialization of Basic Parameters """
         self.id = wallet_id 
-        self.password = password
+        self.passwordHash = passwordHash
         self.secret = secret
         self.keypairs = []
 
     def generateAddress(self):
         """ Generate an Address based on the secret """ 
         if self.secret == None:
-            self.generateSecret(self.password, wallet_pass=True)
+            self.generateSecret(self.passwordHash, wallet_pass=True)
 
         # Last set of keypairs
         if not self.keypairs:
@@ -57,8 +57,8 @@ class Wallet:
 
     def generateSecret(self, secret, wallet_pass=False):
         """ Create a secret using a password hash based on PBKDF2."""
-        secret = hashlib.pbkdf2_hmac('sha256', secret.encode('utf-8'), b'salt', 100000)
-        hexed  = binascii.hexlify(secret)
+        secretX = hashlib.pbkdf2_hmac('sha256', secret.encode('utf-8'), b'salt', 100000)
+        hexed  = binascii.hexlify(secretX)
         if wallet_pass: 
             self.secret = hexed
             return
@@ -72,6 +72,11 @@ class Wallet:
             if wallet["index"] == index:
                 return wallet["public_key"]
         
+    def getAddressByPublicKey(self, public_key):
+        #TODO: Throw error
+        for wallet in self.keypairs:
+            if wallet["public_key"] == public_key:
+                return wallet["public_key"]
 
     def getSecretKeyByAddress(self, address):
         """ Gather the secret key from the address """
