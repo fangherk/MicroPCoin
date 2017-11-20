@@ -4,6 +4,7 @@ import time
 import secrets
 import threading
 import queue
+import sys
 
 FEE_PER_TRANSACTION = 1
 MINING_REWARD = 5000000000
@@ -120,11 +121,12 @@ class Miner:
 
             # Recompute the difficulty of the block
             blockDifficulty = block.getDifficulty()
-            print("INFO: blockDifficulty={:} chainDifficulty={:}".format(blockDifficulty, difficulty))
+            print("INFO: blockDifficulty={:} chainDifficulty={:}".format(blockDifficulty, difficulty), file=sys.stderr)
 
-            # Once 
+            # Once the block difficulty exceeds the required difficulty, we have proved the block.
             if blockDifficulty > difficulty: break
 
-        print("Finish block = ", type(block), str(block))
+        # Output back to the wrapper function call
+        print("Mined block = {:}".format(str(block)), file=sys.stderr)
         self.threadQueue.put(block)
         return block
