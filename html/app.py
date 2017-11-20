@@ -83,12 +83,13 @@ Operator
 """
 
 @uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
-def wallets(passwd=None):
+def wallets():
     if request.method == 'GET':
         return str(operator.getWallets())
     elif request.method == "POST":
-        # TODO: Create a wallet from a password
-        pass
+        jsonData = json.loads(request.data)
+        password = jsonData["password"]
+        return str(operator.createWalletFromPassword(password))
 
 @uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
 def getWalletById(walletId):

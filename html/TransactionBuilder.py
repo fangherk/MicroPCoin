@@ -52,8 +52,9 @@ class TransactionBuilder:
         inputs = [] 
         for utxo in self.listOfUTXO:
             inputStr  = str(utxo.transaction) + str(utxo.index) + str(utxo.address)
-            secretX = hashlib.pbkdf2_hmac('sha256', inputStr.encode('utf-8'), b'salt', 100000)
-            hexed  = binascii.hexlify(secretX)
+            # secretX = hashlib.pbkdf2_hmac('sha256', inputStr.encode('utf-8'), b'salt', 100000)
+            # hexed  = binascii.hexlify(secretX)
+            hexed = hashlib.sha256(inputStr.encode('utf-8')).hexdigest()
             txiHash = hexed
 
             # Create a signing key from secretkey

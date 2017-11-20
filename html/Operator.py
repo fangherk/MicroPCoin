@@ -1,14 +1,22 @@
 import Wallet
 import secrets
+import pickle
+import hashlib
+import json
+import binascii
 
 class Operator:
-    def __init__(self, dbName, blockChain, init=False):
+    def __init__(self, dbName, blockChain, init=True):
         self.dbName = dbName
+        self.wallets = []
         if not init:
             self.wallets = pickle.load(open(dbName, "rb"))
         else:
             pickle.dump(self.wallets, open(dbName, "wb"))
         self.blockchain = blockChain
+
+    def __repr__(self):
+        return json.dumps(self.__dict__)
 
     def addWallet(self, wallet):
         self.wallets.append(wallet)
@@ -16,13 +24,12 @@ class Operator:
         return wallet
 
     def createWalletFromPassword(self, password):
-        passwordHash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), b'salt', 100000)
-        hexed = binascii.hexlify(passwordHash)
-        wallet = Wallet(secrets.token_hex(32), hexed)
+        hexed = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        wallet = Wallet.Wallet(secrets.token_hex(32), hexed)
         return self.addWallet(wallet)
 
     def createWalletFromHash(self, hashH):
-        wallet = Wallet(secrets.token_hex(32), hashH)
+        wallet = Wallet.Wallet(secrets.token_hex(32), hashH)
         return self.addWallet(wallet)
 
     def checkWalletPassword(self, walletId, hashH):

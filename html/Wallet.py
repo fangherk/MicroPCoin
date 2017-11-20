@@ -11,7 +11,7 @@ class Wallet:
         self.id = wallet_id 
         self.passwordHash = passwordHash
         self.secret = secret
-        self.keypairs = []
+        self.keypairs = []  
 
     def __repr__(self):
         return json.dumps(self.__dict__)
