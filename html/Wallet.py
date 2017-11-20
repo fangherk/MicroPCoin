@@ -1,5 +1,5 @@
 import hashlib, binascii
-import nacl.encoding, nacl.signing
+import ed25519 # API Documentation is available at: https://github.com/warner/python-ed25519
 import json
 
 class Wallet:
@@ -42,18 +42,18 @@ class Wallet:
 
 
     def generateKeyPair(self, seed):
-        """ Generate Key Public and Private Key Pairs using the EdDSA algorithm library"""
+        """ 
+        Generate Key Public and Private Key Pairs using the EdDSA algorithm library
+        """
         keys = {} 
-        signing_key = nacl.signing.SigningKey.generate(seed)
+        signing_key = ed25519.SigningKey(seed)
 
         # Obtain the verify key for a given signing key
-        verify_key = signing_key.verify_key
+        verify_key = signing_key.get_verifying_key()
 
-        # Serialize the verify key to send it to a third party
-        verify_key_hex = verify_key.encode(encoder=nacl.encoding.HexEncoder)
-
-        keys["secret_key"] = signing_key
-        keys["public_key"] = verify_key_hex
+        # Convert secret key and public keys into hexadecimal format.
+        keys["secret_key"] = signing_key.to_ascii(encoding='hex')
+        keys["public_key"] = verify_key.to_ascii(encoding='hex')
 
         return keys
 
