@@ -50,3 +50,11 @@ def createBlock(data):
     """
     Create a block from JSON object
     """ 
+    block = Block()
+    block.index = data["index"]
+    block.previousHash = data["previousHash"]
+    block.timestamp = data["timestamp"]
+    block.nonce = data["nonce"]
+    block.transactions = data["transactions"]
+    block.hash = block.toHash()
+    return block
