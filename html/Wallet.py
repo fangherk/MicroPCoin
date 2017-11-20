@@ -61,8 +61,8 @@ class Wallet:
         verify_key = signing_key.get_verifying_key()
 
         # Convert secret key and public keys into hexadecimal format.
-        keys["secret_key"] = signing_key.to_ascii(encoding='hex').decode('utf-8')
-        keys["public_key"] = verify_key.to_ascii(encoding='hex').decode('utf-8')
+        keys["secret_key"] = signing_key.to_bytes().decode('utf-8')
+        keys["public_key"] = verify_key.to_bytes().decode('utf-8')
 
         return keys
 
