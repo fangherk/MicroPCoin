@@ -1,5 +1,6 @@
 import hashlib
 import json
+import ed25519
 
 FEE_PER_TRANSACTION = 1
 
@@ -41,17 +42,20 @@ class Transaction:
             raise ValueError("hash value of transaction error")
 
         # Check if the signature of all input transactions are correct.
-        for inputTransaction in self.data["inputs"]
+        for inputTransaction in self.data["inputs"]:
             transactionHash = inputTransaction["transaction"]
             index = inputTransaction["index"]
             amount = inputTransaction["amount"]
             address = inputTransaction["address"]
             signature = inputTransaction["signature"]
 
-            # TODO: Verify that the message is signed by the correct individual.
             publicKey = address
             messageHash = str(transactionHash) + str(index) + str(address)
-            # verify(publicKey, signature, messageHash) must be true
+
+            verifying_key = VerifyingKey(publicKey, encoding="hex")
+            verification = verifying_key.verify(signature, messageHash)
+            if(not verification):
+                raise ValueError("Signed transaction is invalid by verification process")
 
         # Check if the sum of input transactions are enough for the sum of output transactions
         # plus fee.
@@ -59,9 +63,9 @@ class Transaction:
             sumOfInputsAmount = 0
             sumOfOutputsAmount = 0
             
-            for inputTransaction in self.data["inputs"]
+            for inputTransaction in self.data["inputs"]:
                 sumOfInputsAmount += inputTransaction["amount"]
-            for outputTransaction in self.data["outputs"]
+            for outputTransaction in self.data["outputs"]:
                 sumOfOutputsAmount += outputTransaction["amount"]
 
             if(sumOfInputsAmount < sumOfOutputsAmount):
@@ -74,7 +78,7 @@ class Transaction:
 
 def createTransaction(data):
     """
-    Create a transaction.
+    Create a transaction from JSON object.
     """
     transaction = Transaction()
     transaction["id"] = data["id"]

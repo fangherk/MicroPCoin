@@ -31,10 +31,10 @@ class Miner:
             data["type"] = "fee"
             data["data"] = {
                 "inputs": [],
-                "outputs": [
+                "outputs": [{
                     "amount": FEE_PER_TRANSACTION,
                     "address": address
-                ]
+                }]
             }
             feeTransaction = Transaction.createTransaction(data)
             transactions.push(feeTransaction)
@@ -47,10 +47,10 @@ class Miner:
             data["type"] = "reward"
             data["data"] = {
                 "inputs": [],
-                "outputs": [
+                "outputs": [{
                     "amount": MINING_REWARD,
                     "address": address
-                ]
+                }]
             }
             rewardTransaction = Transaction.createTransaction(data)
             transactions.push(rewardTransaction)

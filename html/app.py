@@ -11,8 +11,8 @@ import Operator
 """ --------------- """
 
 uPCoin = Flask(__name__)
-blockchain = Blockchain.Blockchain("test", "transactionsTest")
-operator = Operator.Operator()
+blockchain = Blockchain.Blockchain("blockchainDb", "transactionDb")
+operator = Operator.Operator('walletDb', blockchain)
 
 """ Main Page """
 @uPCoin.route('/')
@@ -21,9 +21,6 @@ def index():
 
 
 """ Blockchain GET/POST requests """
-""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""
 
 @uPCoin.route('/blockchain/blocks', methods=['GET'])
 def get_blocks():
@@ -81,9 +78,9 @@ def get_unspent_transactions(address):
         # TODO: Test
         return str(Blockchain.getUnspentTransactionsForAddress(address))
 
-""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""
+"""
+Operator
+"""
 
 @uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
 def wallets(passwd=None):
@@ -116,7 +113,29 @@ def getBalance(walletId, addressId):
         pass
 
 
+"""
+Node
+"""
+@uPCoin.route('/node/peers/', methods=['GET', 'POST'])
+def peers():
+    if request.method == 'GET':
+        pass
+    elif request.method == "POST":
+        pass
 
+
+@uPCoin.route('/node/transactions/<transactionId>/confirmations', methods=['GET'])
+def getComfirmations(transactionId):
+    if request.method == 'GET':
+        pass
+
+"""
+Miner
+"""
+@uPCoin.route('/miner/mine', methods=['POST'])
+def mine():
+    if request.method == 'POST':
+        pass
 
 if __name__=='__main__':
     uPCoin.run(debug=True, host='134.173.38.172')

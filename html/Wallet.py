@@ -4,7 +4,10 @@ import json
 
 class Wallet:
     def __init__(self, wallet_id, passwordHash, secret=None, keypairs=None):
-        """ Wallet Initialization of Basic Parameters """
+        """ 
+        Wallet Constructor
+        - Initialization of Basic Parameters 
+        """
         self.id = wallet_id 
         self.passwordHash = passwordHash
         self.secret = secret
@@ -14,7 +17,9 @@ class Wallet:
         return json.dumps(self.__dict__)
 
     def generateAddress(self):
-        """ Generate an Address based on the secret """ 
+        """ 
+        Generate an Address based on the secret 
+        """ 
         if self.secret == None:
             self.generateSecret(self.passwordHash, wallet_pass=True)
 
@@ -33,11 +38,11 @@ class Wallet:
             seed = self.generateSecret(temp_secret)
 
         key_pair = self.generateKeyPair(seed) 
-        new_key_pair = {index: len(self.keypairs) +  1,
-                      secret_key: key_pair["secret_key"],
-                      public_key: key_pair["public_key"]}
+        new_key_pair = {"index":        len(self.keypairs) +  1,
+                        "secret_key":   key_pair["secret_key"],
+                        "public_key":   key_pair["public_key"]}
 
-        self.keyPairs.append(newKeyPair)
+        self.keyPairs.append(new_key_pair)
         return new_key_pair["public_key"]
 
 
@@ -58,7 +63,9 @@ class Wallet:
         return keys
 
     def generateSecret(self, secret, wallet_pass=False):
-        """ Create a secret using a password hash based on PBKDF2."""
+        """ 
+        Create a secret using a password hash based on PBKDF2.
+        """
         secretX = hashlib.pbkdf2_hmac('sha256', secret.encode('utf-8'), b'salt', 100000)
         hexed  = binascii.hexlify(secretX)
         if wallet_pass: 
@@ -69,7 +76,9 @@ class Wallet:
 
 
     def getPublicKeyByAddress(self, index):
-        """ Gather the address by its index """
+        """ 
+        Gather the address by its index 
+        """
         for wallet in self.keypairs:
             if wallet["index"] == index:
                 return wallet["public_key"]
@@ -81,11 +90,15 @@ class Wallet:
                 return wallet["public_key"]
 
     def getSecretKeyByAddress(self, address):
-        """ Gather the secret key from the address """
+        """
+        Gather the secret key from the address 
+        """
         for wallet in self.keypairs:
             if wallet["public_key"] == address:
                 return wallet["secret_key"]
 
     def getAddresses(self):
-        """ Get all of the addresses """
+        """ 
+        Get all of the addresses 
+        """
         return [wallet["public_key"] for wallet in self.keypairs]  
