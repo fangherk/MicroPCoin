@@ -181,14 +181,16 @@ def peers():
         return str(node.peers)
     elif request.method == "POST":
         jsonData = json.loads(request.data)
-        newPeer = node.connectToPeer(jsonData["peer"])
+        newPeer = node.connectWithPeer(jsonData["peer"])
         return str(newPeer)
 
 
 @uPCoin.route('/node/transactions/<transactionId>/confirmations', methods=['GET'])
 def getComfirmations(transactionId):
     if request.method == 'GET':
-        node.getConfirmations(transactionId)
+        numConfirmations = node.getConfirmations(transactionId)
+
+    return str(numConfirmations)
 
 """
 Miner
