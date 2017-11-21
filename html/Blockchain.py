@@ -1,4 +1,5 @@
 import Block
+import Transaction
 import pickle
 import json
 
@@ -253,6 +254,7 @@ class Blockchain:
         Check that the new transaction is valid based on the blockchain, e.g. not already in the blockchain.
         """
         # Check that the transaction, in terms of signature, etc.
+        print(transaction)
         transaction.check()
 
         # Check if the transaction is already in the blockchain.
@@ -263,10 +265,11 @@ class Blockchain:
         # Check if the transaction is already spent
         for inputTransaction in transaction.data["inputs"]:
             for block in self.blocks:
-                for previousTransaction in block.transacations.data["input"]:
-                    if(inputTransaction["index"] == previousTransaction["index"] and\
-                       inputTransaction["transaction"] == previousTransaction["transaction"]):
-                       raise ValueError("transaction is already spent")
+            	for transaction in block.transactions:
+	                for previousTransaction in transaction.data["input"]:
+	                    if(inputTransaction["index"] == previousTransaction["index"] and\
+	                       inputTransaction["transaction"] == previousTransaction["transaction"]):
+	                       raise ValueError("transaction is already spent")
 
         return True
 

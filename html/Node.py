@@ -100,7 +100,7 @@ class Node:
         except:
             return False
 
-    def getConfirmations(self, peer, transactionID):
+    def getConfirmations(self, transactionID):
         """ Get the confrimation from all of the transactions """
         # TODO: Implement Confirmations from transactions
         transactions = self.blockchain.getTransactionFromBlocks(transactionID)

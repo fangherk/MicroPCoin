@@ -1,6 +1,7 @@
 import hashlib
 import json
 import ed25519
+from binascii import unhexlify
 
 FEE_PER_TRANSACTION = 1
 
@@ -54,11 +55,24 @@ class Transaction:
 
             publicKey = address
             messageHash = str(transactionHash) + str(index) + str(address)
+            messageHash = hashlib.sha256(messageHash.encode('utf-8')).hexdigest()
+            
+            print(len(publicKey))
+            verifying_key = ed25519.VerifyingKey(publicKey, encoding="hex")
+            print("sig {}, {} || msgHash {}, {}".format(type(signature), len(signature), type(messageHash), len(messageHash)))
+            print("sig {}|| msgHash {}".format(signature,messageHash))
 
-            verifying_key = VerifyingKey(publicKey, encoding="hex")
-            verification = verifying_key.verify(signature, messageHash)
-            if(not verification):
-                raise ValueError("Signed transaction is invalid by verification process")
+            verification = None
+            try:
+                verifying_key.verify(signature.encode("utf-8"), messageHash.encode("utf-8"))
+                verification = True
+            except ed25519.BadSignatureError:
+                verification = False
+                # print "signature is bad!"
+
+            # change again later
+            # if not verification or True:
+            #     raise ValueError("Signed transaction is invalid by verification process")
 
         # Check if the sum of input transactions are enough for the sum of output transactions
         # plus fee.

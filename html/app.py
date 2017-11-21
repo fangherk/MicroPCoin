@@ -8,6 +8,7 @@ import json
 import Block
 import Blockchain
 import Operator
+import Transaction
 import Miner
 import Node
 
@@ -76,15 +77,14 @@ def transaction(transactionId_val=None):
         # Return all transactions
         return str(blockchain.getAllTransactions())
     elif request.method == 'POST':
-        # TODO: Test add transaction
-        return str(blockchain.addTransaction(request.json))
+        transaction = Transaction.createTransaction(request.json)
+        return str(blockchain.addTransaction(transaction))
 
 @uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
 def get_unspent_transactions(address):
     if request.method == 'GET':
         # Get all unspent transactions from the given address
-        # TODO: Test
-        return str(Blockchain.getUnspentTransactionsForAddress(address))
+        return str(blockchain.getUnspentTransactionsForAddress(address))
 
 """
 Operator
@@ -189,7 +189,6 @@ def peers():
 def getComfirmations(transactionId):
     if request.method == 'GET':
         numConfirmations = node.getConfirmations(transactionId)
-
     return str(numConfirmations)
 
 """
