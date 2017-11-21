@@ -52,8 +52,6 @@ class TransactionBuilder:
         inputs = [] 
         for utxo in self.listOfUTXO:
             inputStr  = str(utxo.transaction) + str(utxo.index) + str(utxo.address)
-            # secretX = hashlib.pbkdf2_hmac('sha256', inputStr.encode('utf-8'), b'salt', 100000)
-            # hexed  = binascii.hexlify(secretX)
             hexed = hashlib.sha256(inputStr.encode('utf-8')).hexdigest()
             txiHash = hexed
 
@@ -73,7 +71,7 @@ class TransactionBuilder:
             outputs.append({"amount":   changeAmount,
                             "address":  self.outputAddress})
         else:
-            raise ValueError("Sender does not have enough money to  send transaction"0
+            raise ValueError("Sender does not have enough money to  send transaction")
 
         return Transaction.createTransaction({  "id": secrets.token_hex(32) , 
                                                 "hash": None, 
