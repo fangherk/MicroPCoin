@@ -3,9 +3,7 @@ import Transaction
 import pickle
 import json
 
-POW_CURVE = 5
-EVERY_X_BLOCKS = 5
-BASE_DIFFICULTY = 9007199254740991  # Maximum Safe Integer for Javascript
+EVERY_X_BLOCKS = 2
 MINING_REWARD = 5000000000
 
 class Blockchain:
@@ -78,13 +76,11 @@ class Blockchain:
         """
         Calculate the difficulty based on the index. The difficulty should increase as the number 
         of index increases.
-
-        Note: This formula is taken from 
-        https://github.com/conradoqg/naivecoin/blob/master/lib/blockchain/index.js
-
+	
         Note2: Readjust the original formula so that the difficulty is incraesing instead of decreasing.
         """
-        return (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)
+	if(index == 1): return 1
+        else: return index//2 + 1
 
     def getAllTransactions(self):
         """
