@@ -25,9 +25,9 @@ class Block:
 
     def getDifficulty(self):
         """
-        Return difficulty of the block
+        Return difficulty of the block by counting the number of leading zeros.
         """
-        return int(self.hash[:13], 16)
+        return 256 - len('{0:b}'.format(int(self.hash, 16)))
 
     def toHash(self):
         """
