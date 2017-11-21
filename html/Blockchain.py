@@ -106,8 +106,11 @@ class Blockchain:
         If the transaction is not found, ValueError() is raised.
         """
         for block in self.blocks:
+            print(block)
             for transaction in block.transactions:
+                print(transaction)
                 return transaction
+        print("transaction checker!!!!")
         raise ValueError("Transaction with id={:} not found".format(transactionId))
 
     def replaceChain(self, newChain):
@@ -169,7 +172,9 @@ class Blockchain:
         If the new transaction is not valid, ValueError() is raised.
         """
         if self.checkTransaction(transaction):
+            print(transaction)
             self.transactions.append(transaction)
+            print(self.transactions)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             return transaction
         else:
@@ -184,7 +189,7 @@ class Blockchain:
         # Remove any transaction in the pending transaction list that is in the new block.
         for transaction in self.transactions:
             found = False
-            for transactionBlock in newBlock:
+            for transactionBlock in newBlock.transactions:
                 if transaction.id == transactionBlock.id:
                     found = True
                     continue
@@ -261,11 +266,11 @@ class Blockchain:
         # Check if the transaction is already spent
         for inputTransaction in transaction.data["inputs"]:
             for block in self.blocks:
-            	for transaction in block.transactions:
-	                for previousTransaction in transaction.data["input"]:
-	                    if(inputTransaction["index"] == previousTransaction["index"] and\
-	                       inputTransaction["transaction"] == previousTransaction["transaction"]):
-	                       raise ValueError("transaction is already spent")
+                for transaction in block.transactions:
+                    for previousTransaction in transaction.data["input"]:
+                        if(inputTransaction["index"] == previousTransaction["index"] and\
+                           inputTransaction["transaction"] == previousTransaction["transaction"]):
+                           raise ValueError("transaction is already spent")
 
         return True
 

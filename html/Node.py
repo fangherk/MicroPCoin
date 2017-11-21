@@ -106,7 +106,7 @@ class Node:
         transactions = self.blockchain.getTransactionFromBlocks(transactionID)
         numConfirmations = 1
         for peer in self.peers:
-            if self.getConfirmation(peer):
+            if self.getConfirmation(peer, transactionID):
                 numConfirmations += 1
 
         return numConfirmations
