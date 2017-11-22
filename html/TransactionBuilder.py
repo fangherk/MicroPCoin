@@ -1,4 +1,6 @@
 import secrets
+import Transaction
+import hashlib
 import ed25519 # API Documentation is available at: https://github.com/warner/python-ed25519
 
 class TransactionBuilder:
@@ -11,7 +13,7 @@ class TransactionBuilder:
         self.secretKey = None
         self.typeW = 'regular'
 
-    def from(self, listOfUTXO):
+    def fromAddress(self, listOfUTXO):
         self.listOfUTXO = listOfUTXO
         return self
 
@@ -47,19 +49,19 @@ class TransactionBuilder:
         for output in self.listOfUTXO:
             totalAmountOfUTXO += output["amount"]
 
-        changeAmount =  totalAmountofUTXO - self.totalAmount - self.feeAmount
+        changeAmount =  int(totalAmountOfUTXO) - int(self.totalAmount) - int(self.feeAmount)
 
         inputs = [] 
         for utxo in self.listOfUTXO:
-            inputStr  = str(utxo.transaction) + str(utxo.index) + str(utxo.address)
+            inputStr  = str(utxo["transaction"]) + str(utxo["index"]) + str(utxo["address"])
             hexed = hashlib.sha256(inputStr.encode('utf-8')).hexdigest()
             txiHash = hexed
 
             # Create a signing key from secretkey
-            signing_key = ed25519.SigningKey(sefl.secretkey)
+            signing_key = ed25519.SigningKey(self.secretKey.encode('utf-8'))
 
             # Sign the transaction using the signing key
-            utxo.signature =  signing_key.sign(txiHash, encoding="hex")
+            utxo["signature"] =  signing_key.sign(txiHash.encode('utf-8'), encoding="hex")
 
             inputs.append(utxo)
 

@@ -1,4 +1,5 @@
 import Wallet
+import TransactionBuilder
 import secrets
 import pickle
 import hashlib
@@ -93,7 +94,14 @@ class Operator:
         wallet = self.getWalletById(walletId)
         secretKey = wallet.getSecretKeyByAddress(fromAddressId)
 
+        transaction = TransactionBuilder.TransactionBuilder()
+        transaction.fromAddress(utxo)
+        transaction.to(toAddressId, amount)
+        transaction.change(changeAddressId)
+        transaction.fee(1)
+        transaction.sign(secretKey)
         # TODO: finish this up
+        return transaction.build()
         
 
 
