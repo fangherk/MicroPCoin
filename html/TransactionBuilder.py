@@ -24,30 +24,39 @@ class TransactionBuilder:
         return json.dumps(self, default=jsonDumper)
 
     def fromAddress(self, listOfUTXO):
+        """ Change the from address of the transaction""" 
         self.listOfUTXO = listOfUTXO
         return self
 
     def to(self, address, amount):
+        """ Change the outputAddress and total amount of the transaction""" 
         self.outputAddress = address
         self.totalAmount = amount
         return self
 
     def change(self, changeAddress):
+        """ Change the changeAddress """ 
         self.changeAddress = changeAddress
         return self
 
     def fee(self, amount):
+        """ Change the fee of the transaction"""
         self.feeAmount = amount
         return self
 
     def sign(self, secretKey):
+        """ Change secret key of the transaction""" 
         self.secretKey = secretKey
         return self
 
     def type(self, typeT):
+        """ Change the type of the transaction """ 
         self.typeW = typeT
 
     def build(self):
+        """ Build a transaction from the internal parameters"""
+
+        # check for valid transactions by checking
         if self.listOfUTXO == None:
             raise ValueError(" Unspent Output Transactions ")
         elif self.outputAddress == None:
@@ -55,12 +64,15 @@ class TransactionBuilder:
         elif self.totalAmount == None:
             raise ValueError(" No Total Amount ")
 
+        # Add up all the amounts from the utxo
         totalAmountOfUTXO = 0
         for output in self.listOfUTXO:
             totalAmountOfUTXO += output["amount"]
 
+        # Remove the transaction amount from the total utxo amounts
         changeAmount =  int(totalAmountOfUTXO) - int(self.totalAmount) - int(self.feeAmount)
 
+        # Generate the inputs 
         inputs = [] 
         for utxo in self.listOfUTXO:
             inputStr  = str(utxo["transaction"]) + str(utxo["index"]) + str(utxo["address"])
@@ -78,6 +90,7 @@ class TransactionBuilder:
 
             inputs.append(utxo)
 
+        # Generate the outputs
         outputs = []
         outputs.append({"amount":   self.totalAmount,
                         "address":  self.outputAddress})
@@ -88,6 +101,7 @@ class TransactionBuilder:
         else:
             raise ValueError("Sender does not have enough money to  send transaction")
 
+        # return a dictionary of all the values to the create transaction function in Transaction 
         buildData = {}
         buildData["id"] = secrets.token_hex(32)
         buildData["hash"] = None

@@ -20,20 +20,24 @@ class Operator:
         return json.dumps(self.__dict__)
 
     def addWallet(self, wallet):
+        """ Add a wallet to all the wallets of the operator """
         self.wallets.append(wallet)
         pickle.dump(self.wallets, open(self.dbName, "wb"))
         return wallet
 
     def createWalletFromPassword(self, password):
+        """ Create a wallet from a password """
         hexed = hashlib.sha256(password.encode('utf-8')).hexdigest()
         wallet = Wallet.Wallet(secrets.token_hex(32), hexed)
         return self.addWallet(wallet)
 
     def createWalletFromHash(self, hashH):
+        """ Create a Wallet from the hash """
         wallet = Wallet.Wallet(secrets.token_hex(32), hashH)
         return self.addWallet(wallet)
 
     def checkWalletPassword(self, walletId, passwordHash):
+        """ Check if a wallet exists by its password """
         wallet = self.getWalletById(walletId)
         if wallet == None:
             raise ValueError("Wallet Not Found")
@@ -41,9 +45,11 @@ class Operator:
         return wallet.passwordHash == passwordHash
 
     def getWallets(self):
+        """ Return all the wallets """
         return self.wallets
 
     def getWalletById(self, walletId):
+        """ Get the wallet by its id """
         for wallet in self.wallets:
             if wallet.id == walletId:
                 return wallet
@@ -51,6 +57,7 @@ class Operator:
         raise ValueError("Wrong wallet id")
 
     def generateAddressForWallet(self, walletId):
+        """ Create address for a wallet """ 
         # Finde the wallet ID in the data structure
         targetIdx = None
         for idx in range(len(self.wallets)):
@@ -72,16 +79,19 @@ class Operator:
 
 
     def getAddressesForWallet(self, walletId):
+        """ Get addresses contained in a wallet """
         wallet = self.getWalletById(walletId)
         addresses = wallet.getAddresses()
         return addresses
 
     def getAddressForWallet(self, walletId, addressId):
+        """ Get the address for teh wallet by the publick key """
         wallet = self.getWalletById(walletId)
         address = wallet.getAddressByPublicKey(addressId)
         return address
 
     def getBalanceForAddress(self, addressId):
+        """ Get the balance of the address """
         utxo = self.blockchain.getUnspentTransactionsForAddress(addressId)
         summed = 0
         for outputTransaction in utxo:
@@ -90,6 +100,8 @@ class Operator:
         return summed
 
     def createTransaction(self, walletId, fromAddressId, toAddressId, amount, changeAddressId):
+        """ Create a transaction for a wallet"""
+
         utxo = self.blockchain.getUnspentTransactionsForAddress(fromAddressId)
         wallet = self.getWalletById(walletId)
         secretKey = wallet.getSecretKeyByAddress(fromAddressId)

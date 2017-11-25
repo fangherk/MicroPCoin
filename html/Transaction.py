@@ -52,14 +52,17 @@ class Transaction:
             amount = inputTransaction["amount"]
             address = inputTransaction["address"]
             signature = inputTransaction["signature"]
-
             publicKey = address
+            
+
+            # Generate the Message Hash from the transaction hash, index, and address
             messageHash = str(transactionHash) + str(index) + str(address)
-            #print("messageHash", messageHash)
             messageHashed = hashlib.sha256(messageHash.encode('utf-8')).digest()
-            #print("publicKey", publicKey)
+
+            # Generate the signing and verifying keys from the public key
             signing_key = ed25519.SigningKey(publicKey.encode("utf-8"))
             verifying_key = signing_key.get_verifying_key()
+            
             # sig = signing_key.sign(messageHash, encoding="hex")
             # print(len(publicKey))
             #print("publicKey is {}", publicKey)
@@ -70,6 +73,8 @@ class Transaction:
             print("verify signature encode {}\nmessageHash {}\n".format(publicKey.encode("utf-8"), messageHashed))
             print("singature encoding: {}".format(signature.encode("utf-8")))
 
+            # Check if the the signature of the transaction is valid by checking if we can verify the messageHash
+            # by the signature.
             verification = None
             try:
                 verifying_key.verify(signature.encode("utf-8"), messageHashed, encoding="hex")
