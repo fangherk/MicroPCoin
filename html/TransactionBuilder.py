@@ -75,19 +75,38 @@ class TransactionBuilder:
         # Generate the inputs 
         inputs = [] 
         for utxo in self.listOfUTXO:
+            # Generate the transaction input and calculate the hash/sign the data
             inputStr  = str(utxo["transaction"]) + str(utxo["index"]) + str(utxo["address"])
             hexed = hashlib.sha256(inputStr.encode('utf-8')).digest()
             txiHash = hexed
 
             # Create a signing key from secretkey
-            signing_key = ed25519.SigningKey(utxo["address"].encode('utf-8'))
-            print("utxo address", utxo["address"])
-            print("signing signature encode: {}\ninputHash: {}\n".format(utxo["address"].encode('utf-8'),  hexed))
-            # Sign the transaction using the signing key
-            print("signature sign: ", signing_key.sign(txiHash, encoding="hex"))
+            print("Pause --------------")
+            # print("alert!--------------")
+            # signing_key = ed25519.SigningKey(self.secretKey.encode("utf-8"))
+            # sig = signing_key.sign(txiHash, encoding="base64")
+            # verifying_key = signing_key.get_verifying_key()
+            # verifying_key.verify(sig, txiHash, encoding="base64")
+            # print("alert!--------------")
+            signing_key, verify_key = self.generateKeyPair(self.secretKey)
+            # # Sign the transaction using the signing key
+            # print("alert!--------------")
+            # sig = signing_key.sign(txiHash, encoding="base64")
+            # verify_key.verify(sig, txiHash, encoding="base64")
+            # print("alert!--------------")
+
             utxo["signature"] =  signing_key.sign(txiHash, encoding="hex").decode("utf-8")
+            # print("messageHashV", hexed)
+            # print("signatureV", utxo["signature"])
 
-
+            # # print("verify key", verify_key.to_ascii(encoding="hex").decode("ascii"))
+            # strig = '3432626566663236633432393134343066636161663266383062396462646631'
+            # verifier = ed25519.VerifyingKey(strig.encode("ascii"), encoding="hex")
+            # print("\n\n\n\nDoes this work? ")
+            # abc = verifier.verify(signing_key.sign(txiHash, encoding="hex"), txiHash, encoding="hex")
+            # print(abc) 
+            # print("\n\n\n\n-----------")
+            # print("\n\n stop \n\n")
             inputs.append(utxo)
 
         # Generate the outputs
@@ -97,7 +116,7 @@ class TransactionBuilder:
 
         if changeAmount > 0:
             outputs.append({"amount":   changeAmount,
-                            "address":  self.outputAddress})
+                            "address":  self.changeAddress})
         else:
             raise ValueError("Sender does not have enough money to  send transaction")
 
@@ -115,3 +134,14 @@ class TransactionBuilder:
         
 
 
+    def generateKeyPair(self, seed):
+            """ 
+            Generate Key Public and Private Key Pairs using the EdDSA algorithm library
+            """
+            keys = {} 
+            signing_key = ed25519.SigningKey(seed.encode('utf-8'))
+
+            # Obtain the verify key for a given signing key
+            verify_key = signing_key.get_verifying_key()
+
+            return signing_key, verify_key

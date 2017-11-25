@@ -176,9 +176,9 @@ class Blockchain:
         If the new transaction is not valid, ValueError() is raised.
         """
         if self.checkTransaction(transaction):
-            print(transaction)
+            # print(transaction)
             self.transactions.append(transaction)
-            print(self.transactions)
+            # print(self.transactions)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             return transaction
         else:
@@ -259,7 +259,7 @@ class Blockchain:
         Check that the new transaction is valid based on the blockchain, e.g. not already in the blockchain.
         """
         # Check that the transaction, in terms of signature, etc.
-        print(transaction)
+        # print(transaction)
         transaction.check()
 
         # Check if the transaction is already in the blockchain.

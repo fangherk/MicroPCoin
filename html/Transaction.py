@@ -1,6 +1,7 @@
 import hashlib
 import json
 import ed25519
+import binascii
 from binascii import unhexlify
 
 FEE_PER_TRANSACTION = 1
@@ -60,23 +61,21 @@ class Transaction:
             messageHashed = hashlib.sha256(messageHash.encode('utf-8')).digest()
 
             # Generate the signing and verifying keys from the public key
-            signing_key = ed25519.SigningKey(publicKey.encode("utf-8"))
-            verifying_key = signing_key.get_verifying_key()
-            
-            # sig = signing_key.sign(messageHash, encoding="hex")
-            # print(len(publicKey))
-            #print("publicKey is {}", publicKey)
-            #verifying_key = ed25519.VerifyingKey(publicKey, encoding="hex")
-            # print("sig {}, {} || msgHash {}, {}".format(type(signature), len(signature), type(messageHash), len(messageHash)))
-            # print("sig {}|| msgHash {}".format(signature,messageHash))
-            print("public address", publicKey)
-            print("verify signature encode {}\nmessageHash {}\n".format(publicKey.encode("utf-8"), messageHashed))
-            print("singature encoding: {}".format(signature.encode("utf-8")))
+            print("length of publick key = ", len(publicKey))
+            print("public Key", publicKey)
+            verifying_key = ed25519.VerifyingKey(publicKey.encode("ascii"), encoding="hex")
+            print("signatureS", signature)
+            print("messageHashS", messageHashed)
+
+            # strig = '3432626566663236633432393134343066636161663266383062396462646631'
+            # print("\n\n")
+            # print(verifying_key == ed25519.VerifyingKey(strig.encode("ascii"), encoding="hex"))
 
             # Check if the the signature of the transaction is valid by checking if we can verify the messageHash
             # by the signature.
             verification = None
             try:
+                print(bytearray.fromhex(signature))
                 verifying_key.verify(signature.encode("utf-8"), messageHashed, encoding="hex")
                 verification = True
                 print("signature is good!")

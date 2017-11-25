@@ -85,7 +85,7 @@ class Operator:
         return addresses
 
     def getAddressForWallet(self, walletId, addressId):
-        """ Get the address for teh wallet by the publick key """
+        """ Get the address for teh wallet by the public key """
         wallet = self.getWalletById(walletId)
         address = wallet.getAddressByPublicKey(addressId)
         return address

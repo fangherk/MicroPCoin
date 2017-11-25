@@ -27,7 +27,7 @@ node = Node.Node(os.environ["ip"], os.environ["port"], ["142.129.183.125"], bloc
 """ Main Page """
 @uPCoin.route('/')
 def index():
-	# TODO: Prettify This Page
+    # TODO: Prettify This Page
     return 'Welcome to uPCoin.'
 
 
@@ -40,13 +40,13 @@ def get_blocks():
 
 @uPCoin.route('/blockchain/blocks/latest', methods=['GET', 'PUT'])
 def latest_blocks():
-	""" GET: Return the latest block in JSON format
-		PUT: Add a block to the blockchain """
+    """ GET: Return the latest block in JSON format
+        PUT: Adda block to the blockchain """ 
     if request.method == 'GET':
         return str(blockchain.getLastBlock())
     elif request.method == 'PUT':
 
-    	# Take in the request
+        # Take in the request
         inputJSON = request.json
 
         # Create a block for the request
@@ -81,8 +81,8 @@ def get_transaction(transactionId_val):
     
 @uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
 def transaction(transactionId_val=None):
-	""" GET: Return the latest transactions
-		POST: Add a transaction """
+    """ GET: Return the latest transactions
+        POST: Add a transaction """
     if request.method == 'GET':
         return str(blockchain.getAllTransactions())
     elif request.method == 'POST':
@@ -91,7 +91,7 @@ def transaction(transactionId_val=None):
 
 @uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
 def get_unspent_transactions(address):
-	""" Get the unspent transactions for the address. """
+    """ Get the unspent transactions for the address. """
     if request.method == 'GET':
         return str(blockchain.getUnspentTransactionsForAddress(address))
 
@@ -101,8 +101,8 @@ Operator
 
 @uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
 def wallets():
-	""" GET: Get all wallets 
-		POST: Create a new Wallet by posting a password """
+    """ GET: Get all wallets 
+        POST: Create a new Wallet by posting a password """
     if request.method == 'GET':
         return str(operator.getWallets())
     elif request.method == "POST":
@@ -118,7 +118,7 @@ def wallets():
 
 @uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
 def getWalletById(walletId):
-	""" Get a wallet by the specified ID """
+    """ Get a wallet by the specified ID """
     if request.method == "GET":
         return str(operator.getWalletById(walletId))
 
@@ -135,7 +135,7 @@ def createTransaction(walletId):
         amount = jsonData["amount"]
         changeAddress = jsonData["changeAddress"]
 
-        helperChecker()
+        # helperChecker()
         # Compute the hash of the provided password
         passwordHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
@@ -165,26 +165,26 @@ def createTransaction(walletId):
         return str(transcationCreated)
 
 def helperChecker():
-	master = os.urandom(87)
-	seed = hashlib.sha256(master).digest()
-	signing_key = ed25519.SigningKey(seed)
-	signing_key2 = ed25519.SigningKey(seed)
-	sig = signing_key.sign(b"hello world", encoding="hex")
-	verifying_key = ed25519.VerifyingKey(seed)
-	vcorrect_key = signing_key.get_verifying_key()
-	vcorrect_key2 = signing_key2.get_verifying_key()
+    master = os.urandom(87)
+    seed = hashlib.sha256(master).digest()
+    signing_key = ed25519.SigningKey(seed)
+    signing_key2 = ed25519.SigningKey(seed)
+    sig = signing_key.sign(b"hello world", encoding="hex")
+    verifying_key = ed25519.VerifyingKey(seed)
+    vcorrect_key = signing_key.get_verifying_key()
+    vcorrect_key2 = signing_key2.get_verifying_key()
 
-	# assert verifying_key == vcorrect_key
-	try:
-	  vcorrect_key2.verify(sig, b"hello world", encoding="hex")
-	  print("signature is good")
-	except ed25519.BadSignatureError:
-	  print("signature is bad!")
+    # assert verifying_key == vcorrect_key
+    try:
+      vcorrect_key2.verify(sig, b"hello world", encoding="hex")
+      print("signature is good")
+    except ed25519.BadSignatureError:
+      print("signature is bad!")
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):
-	""" GET: Get all address of a wallet
-		POST: Create a new address for a wallet """
+    """ GET: Get all address of a wallet
+        POST: Create a new address for a wallet """
     if request.method == "GET":
         # Get all addresses of a wallet
         return str(operator.getAddressesForWallet(walletId))
@@ -210,7 +210,7 @@ def addressesWallet(walletId):
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET'])
 def getBalance(walletId, addressId):
-	""" Get the balance of a wallet """
+    """ Get the balance of a wallet """
     if request.method == "GET":
         # Get a balance for the specified addressId and walletId
         balance = operator.getBalanceForAddress(addressId)
@@ -221,7 +221,7 @@ Node
 """
 @uPCoin.route('/node/peers', methods=['GET', 'POST'])
 def peers():
-	""" Find the nodes of a peer """
+    """ Find the nodes of a peer """
     if request.method == 'GET':
         return str(node.peers)
     elif request.method == "POST":
