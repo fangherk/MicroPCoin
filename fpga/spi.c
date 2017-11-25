@@ -10,8 +10,8 @@
 
 // Constants
 #define MSG_PIN 23
-#define BLOCK_PIN 24
-#define DONE_PIN 25
+#define BLOCK_PIN 25
+#define DONE_PIN 24
 
 
 // Test Cases
