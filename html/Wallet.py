@@ -33,12 +33,11 @@ class Wallet:
         else:
             last_key_pair = self.keypairs[-1]
 
-        # Set the next set based on the 1st seed or the last key pair
+        # Set the next seed based on the 1st seed or the last key pair's public key
         if last_key_pair is None:
             seed = self.secret
-        else:
-            # TODO: Add Key Pair Property
-            temp_secret = self.secret
+        else:            
+            temp_secret = last_key_pair["public_key"]
             seed = self.generateSecret(temp_secret)
 
         key_pair = self.generateKeyPair(seed) 
@@ -60,10 +59,19 @@ class Wallet:
         # Obtain the verify key for a given signing key
         verify_key = signing_key.get_verifying_key()
 
-        # Convert secret key and public keys into hexadecimal format.
-        keys["secret_key"] = signing_key.to_bytes().decode('utf-8')
-        keys["public_key"] = verify_key.to_bytes().decode('utf-8')
+        # print("Ascii representation signing_key: {}  ".format(signing_key.to_ascii(encoding="hex")))
+        # print("Ascii representation verify_key: {} ".format(verify_key.to_ascii(encoding="hex")))
 
+        # print("Byte representation signing_key: {}  ".format(signing_key.to_bytes()))
+        # print("Byte representation verify_key: {} ".format(verify_key.to_bytes()))
+
+        # Convert secret key and public keys into hexadecimal format.
+        # keys["secret_key"] = signing_key.to_bytes().decode('utf-8')
+        # keys["public_key"] = verify_key.to_bytes().decode('utf-8')
+
+        keys["secret_key"] = signing_key.to_bytes().decode('utf-8')
+        keys["public_key"] = verify_key.to_ascii(encoding="hex").decode('utf-8')
+        # print(keys)
         return keys
 
     def generateSecret(self, secret, wallet_pass=False):

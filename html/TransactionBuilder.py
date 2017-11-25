@@ -1,5 +1,6 @@
 import secrets
 import Transaction
+import json
 import hashlib
 import ed25519 # API Documentation is available at: https://github.com/warner/python-ed25519
 
@@ -12,6 +13,15 @@ class TransactionBuilder:
         self.feeAmount = 0
         self.secretKey = None
         self.typeW = 'regular'
+
+    def __repr__(self):
+        """
+        String representation for a transaction
+        """
+        # jsonDumper is used for recursively converting an object to correct JSON output format
+        def jsonDumper(obj):
+            return obj.__dict__
+        return json.dumps(self, default=jsonDumper)
 
     def fromAddress(self, listOfUTXO):
         self.listOfUTXO = listOfUTXO
@@ -54,14 +64,17 @@ class TransactionBuilder:
         inputs = [] 
         for utxo in self.listOfUTXO:
             inputStr  = str(utxo["transaction"]) + str(utxo["index"]) + str(utxo["address"])
-            hexed = hashlib.sha256(inputStr.encode('utf-8')).hexdigest()
+            hexed = hashlib.sha256(inputStr.encode('utf-8')).digest()
             txiHash = hexed
 
             # Create a signing key from secretkey
-            signing_key = ed25519.SigningKey(self.secretKey.encode('utf-8'))
-
+            signing_key = ed25519.SigningKey(utxo["address"].encode('utf-8'))
+            print("utxo address", utxo["address"])
+            print("signing signature encode: {}\ninputHash: {}\n".format(utxo["address"].encode('utf-8'),  hexed))
             # Sign the transaction using the signing key
-            utxo["signature"] =  signing_key.sign(txiHash.encode('utf-8'), encoding="hex")
+            print("signature sign: ", signing_key.sign(txiHash, encoding="hex"))
+            utxo["signature"] =  signing_key.sign(txiHash, encoding="hex").decode("utf-8")
+
 
             inputs.append(utxo)
 
@@ -75,12 +88,16 @@ class TransactionBuilder:
         else:
             raise ValueError("Sender does not have enough money to  send transaction")
 
-        return Transaction.createTransaction({  "id": secrets.token_hex(32) , 
-                                                "hash": None, 
-                                                "type": self.typeW, 
-                                                "data": {   "inputs": inputs, 
-                                                            "outputs" :outputs}
-                                                })
+        buildData = {}
+        buildData["id"] = secrets.token_hex(32)
+        buildData["hash"] = None
+        buildData["type"] = self.typeW
+        inOut = {} 
+        inOut["inputs"] = inputs
+        inOut["outputs"] = outputs
+        buildData["data"] = inOut
+        
+        return Transaction.createTransaction(buildData)
         
 
 

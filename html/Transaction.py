@@ -55,20 +55,29 @@ class Transaction:
 
             publicKey = address
             messageHash = str(transactionHash) + str(index) + str(address)
-            messageHash = hashlib.sha256(messageHash.encode('utf-8')).hexdigest()
-            
-            print(len(publicKey))
-            verifying_key = ed25519.VerifyingKey(publicKey, encoding="hex")
-            print("sig {}, {} || msgHash {}, {}".format(type(signature), len(signature), type(messageHash), len(messageHash)))
-            print("sig {}|| msgHash {}".format(signature,messageHash))
+            #print("messageHash", messageHash)
+            messageHashed = hashlib.sha256(messageHash.encode('utf-8')).digest()
+            #print("publicKey", publicKey)
+            signing_key = ed25519.SigningKey(publicKey.encode("utf-8"))
+            verifying_key = signing_key.get_verifying_key()
+            # sig = signing_key.sign(messageHash, encoding="hex")
+            # print(len(publicKey))
+            #print("publicKey is {}", publicKey)
+            #verifying_key = ed25519.VerifyingKey(publicKey, encoding="hex")
+            # print("sig {}, {} || msgHash {}, {}".format(type(signature), len(signature), type(messageHash), len(messageHash)))
+            # print("sig {}|| msgHash {}".format(signature,messageHash))
+            print("public address", publicKey)
+            print("verify signature encode {}\nmessageHash {}\n".format(publicKey.encode("utf-8"), messageHashed))
+            print("singature encoding: {}".format(signature.encode("utf-8")))
 
             verification = None
             try:
-                verifying_key.verify(signature.encode("utf-8"), messageHash.encode("utf-8"))
+                verifying_key.verify(signature.encode("utf-8"), messageHashed, encoding="hex")
                 verification = True
+                print("signature is good!")
             except ed25519.BadSignatureError:
                 verification = False
-                # print "signature is bad!"
+                print("signature is bad!")
 
             # change again later
             # if not verification or True:
@@ -81,9 +90,9 @@ class Transaction:
             sumOfOutputsAmount = 0
             
             for inputTransaction in self.data["inputs"]:
-                sumOfInputsAmount += inputTransaction["amount"]
+                sumOfInputsAmount += int(inputTransaction["amount"])
             for outputTransaction in self.data["outputs"]:
-                sumOfOutputsAmount += outputTransaction["amount"]
+                sumOfOutputsAmount += int(outputTransaction["amount"])
 
             if(sumOfInputsAmount < sumOfOutputsAmount):
                 raise ValueError("Input amount is less than output amount")
@@ -98,8 +107,23 @@ def createTransaction(data):
     Create a transaction from JSON object.
     """
     transaction = Transaction()
+    # print(data)
+    # print(data["id"])
+    # print(transaction.id)
     transaction.id = data["id"]
     transaction.type = data["type"]
     transaction.data = data["data"]
+    transaction.hash = transaction.toHash()
+    return transaction
+
+
+def createTransactionObject(data):
+    """
+    Create a transaction from JSON object.
+    """
+    transaction = Transaction()
+    transaction.id = data.id
+    transaction.type = data.type
+    transaction.data = data.data
     transaction.hash = transaction.toHash()
     return transaction
