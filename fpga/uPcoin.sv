@@ -163,7 +163,6 @@ module uPcoin_core(input logic clk,
   else begin
     state <= nextstate;
     if(nextstate == intermediateStep) begin
-      {a,b,c,d,e,f,g,h} <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
       intermediate_hash <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
     end else if(state == intermediateStep && nextstate == thirdStep) begin
       intermediate_hash <= intermediate_hash;
@@ -193,14 +192,14 @@ module uPcoin_core(input logic clk,
   // Set up falling edge block 
   always_ff @(posedge clk, negedge block_load)
     if(~block_load) falling_edge_block <= 1;
-  else            falling_edge_block <= 0;
+  else              falling_edge_block <= 0;
 
   // Increase counters for the number of rounds in 6.2.2
   // Set up the intermediate values for the intermediate steps
   always_ff @(posedge clk)
     begin
       if (state == intermediateStep)      roundNumber <=0;
-      else  								                      roundNumber <= roundNumber + 1;
+      else  								      roundNumber <= roundNumber + 1;
 
       if(state == preProcessing)          messageScheduleCounter <= 0;
       else if(state == intermediateStep)  messageScheduleCounter <= messageScheduleCounter + 1;
@@ -233,6 +232,7 @@ module uPcoin_core(input logic clk,
         if(roundNumber < 16) W <= W;
         else                 W[counter3] <= newW;
       end
+		else W <= W;
       
       // Update the variables in 6.2.2.4
       if(state == thirdStep) begin
@@ -245,6 +245,10 @@ module uPcoin_core(input logic clk,
         g <= new_g;
         h <= new_h;
       end
+		// Fix this, only set the initial hash value on the first block. Another Counter? 
+		else if(nextstate == intermediateStep) begin
+			{a,b,c,d,e,f,g,h} <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
+		end
     end
 
   // Set up the next state logic, which depends on the roundNumber and the
