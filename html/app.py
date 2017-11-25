@@ -35,48 +35,55 @@ def index():
 
 @uPCoin.route('/blockchain/blocks', methods=['GET'])
 def get_blocks():
-    # Return all blocks in JSON format
+    """ Return all blocks in JSON format """
     return str(blockchain.getAllBlocks())
 
 @uPCoin.route('/blockchain/blocks/latest', methods=['GET', 'PUT'])
 def latest_blocks():
+	""" GET: Return the latest block in JSON format
+		PUT: Add a block to the blockchain """
     if request.method == 'GET':
-        # Return latest block in JSON format
         return str(blockchain.getLastBlock())
     elif request.method == 'PUT':
-        # Parse the JSON Put Request and add it to the blockchain
+
+    	# Take in the request
         inputJSON = request.json
+
+        # Create a block for the request
         blockToAdd = Block.Block()
         blockToAdd.index = inputJSON["index"]
         blockToAdd.previousHash = inputJSON["previousHash"]
         blockToAdd.timestamp = inputJSON["timestamp"]
         blockToAdd.transactions = inputJSON["transactions"]
         blockToAdd.hash = blockToAdd.toHash()
+
+        # Add block
         return str(blockchain.addBlock(blockToAdd))
 
 @uPCoin.route('/blockchain/blocks/hash/<hash_val>', methods=['GET'])
 def get_block_by_hash(hash_val):
-    # Return a block with specified hash
+    """ Return a block by its specified hash """
     if request.method == 'GET':
         return str(blockchain.getBlockByHash(hash_val))
 
 @uPCoin.route('/blockchain/blocks/index/<index_val>', methods=['GET'])
 def get_block_by_index(index_val):
-    # Return a block with specified index
+    """ Return a block by its specified index """
     if request.method == 'GET':
         index_val = int(index_val)
         return str(blockchain.getBlockByIndex(index_val))
 
 @uPCoin.route('/blockchain/blocks/transactions/<transactionId_val>', methods=['GET'])
 def get_transaction(transactionId_val):
-    # Return transaction by id
+    """ Return the latest transaction by its id """
     if request.method == 'GET':
         return str(blockchain.getTransactionById(transactionId_val))
     
 @uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
 def transaction(transactionId_val=None):
+	""" GET: Return the latest transactions
+		POST: Add a transaction """
     if request.method == 'GET':
-        # Return all transactions
         return str(blockchain.getAllTransactions())
     elif request.method == 'POST':
         transaction = Transaction.createTransaction(request.json)
@@ -84,8 +91,8 @@ def transaction(transactionId_val=None):
 
 @uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
 def get_unspent_transactions(address):
+	""" Get the unspent transactions for the address. """
     if request.method == 'GET':
-        # Get all unspent transactions from the given address
         return str(blockchain.getUnspentTransactionsForAddress(address))
 
 """
@@ -94,11 +101,11 @@ Operator
 
 @uPCoin.route('/operator/wallets', methods=['GET', 'POST'])
 def wallets():
+	""" GET: Get all wallets 
+		POST: Create a new Wallet by posting a password """
     if request.method == 'GET':
-        # Get all wallets
         return str(operator.getWallets())
     elif request.method == "POST":
-        # Create a wallet using the specified password
         jsonData = json.loads(request.data)
         password = jsonData["password"]
         createdWallet = operator.createWalletFromPassword(password)
@@ -111,13 +118,13 @@ def wallets():
 
 @uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
 def getWalletById(walletId):
+	""" Get a wallet by the specified ID """
     if request.method == "GET":
-        # Get a wallet by the specified ID
         return str(operator.getWalletById(walletId))
 
 @uPCoin.route('/operator/wallets/<walletId>/transactions', methods=['POST'])
 def createTransaction(walletId):
-    # Create a transaction
+    """ Create a Transaction """
     if request.method == "POST":
         # Obtain relevant data:
         #   password, fromAddress, toAddress, amount, changeAddress
@@ -176,6 +183,8 @@ def helperChecker():
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):
+	""" GET: Get all address of a wallet
+		POST: Create a new address for a wallet """
     if request.method == "GET":
         # Get all addresses of a wallet
         return str(operator.getAddressesForWallet(walletId))
@@ -201,6 +210,7 @@ def addressesWallet(walletId):
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET'])
 def getBalance(walletId, addressId):
+	""" Get the balance of a wallet """
     if request.method == "GET":
         # Get a balance for the specified addressId and walletId
         balance = operator.getBalanceForAddress(addressId)
@@ -211,6 +221,7 @@ Node
 """
 @uPCoin.route('/node/peers', methods=['GET', 'POST'])
 def peers():
+	""" Find the nodes of a peer """
     if request.method == 'GET':
         return str(node.peers)
     elif request.method == "POST":
@@ -230,7 +241,7 @@ Miner
 """
 @uPCoin.route('/miner/mine', methods=['POST'])
 def mine():
-    # Mine a new block
+    """ Mine a new block """ 
     if request.method == 'POST':
         # Obtain relevant data:
         #   rewardAddress
