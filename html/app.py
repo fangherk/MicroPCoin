@@ -164,22 +164,22 @@ def createTransaction(walletId):
 
         return str(transcationCreated)
 
-def helperChecker():
-    master = os.urandom(87)
-    seed = hashlib.sha256(master).digest()
-    signing_key = ed25519.SigningKey(seed)
-    signing_key2 = ed25519.SigningKey(seed)
-    sig = signing_key.sign(b"hello world", encoding="hex")
-    verifying_key = ed25519.VerifyingKey(seed)
-    vcorrect_key = signing_key.get_verifying_key()
-    vcorrect_key2 = signing_key2.get_verifying_key()
+# def helperChecker():
+#     master = os.urandom(87)
+#     seed = hashlib.sha256(master).digest()
+#     signing_key = ed25519.SigningKey(seed)
+#     signing_key2 = ed25519.SigningKey(seed)
+#     sig = signing_key.sign(b"hello world", encoding="hex")
+#     verifying_key = ed25519.VerifyingKey(seed)
+#     vcorrect_key = signing_key.get_verifying_key()
+#     vcorrect_key2 = signing_key2.get_verifying_key()
 
-    # assert verifying_key == vcorrect_key
-    try:
-      vcorrect_key2.verify(sig, b"hello world", encoding="hex")
-      print("signature is good")
-    except ed25519.BadSignatureError:
-      print("signature is bad!")
+#     # assert verifying_key == vcorrect_key
+#     try:
+#       vcorrect_key2.verify(sig, b"hello world", encoding="hex")
+#       print("signature is good")
+#     except ed25519.BadSignatureError:
+#       print("signature is bad!")
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):

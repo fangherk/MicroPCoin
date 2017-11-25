@@ -61,11 +61,11 @@ class Transaction:
             messageHashed = hashlib.sha256(messageHash.encode('utf-8')).digest()
 
             # Generate the signing and verifying keys from the public key
-            print("length of publick key = ", len(publicKey))
-            print("public Key", publicKey)
+            # print("length of publick key = ", len(publicKey))
+            # print("public Key", publicKey)
             verifying_key = ed25519.VerifyingKey(publicKey.encode("ascii"), encoding="hex")
-            print("signatureS", signature)
-            print("messageHashS", messageHashed)
+            # print("signatureS", signature)
+            # print("messageHashS", messageHashed)
 
             # strig = '3432626566663236633432393134343066636161663266383062396462646631'
             # print("\n\n")
@@ -75,7 +75,7 @@ class Transaction:
             # by the signature.
             verification = None
             try:
-                print(bytearray.fromhex(signature))
+                # print(bytearray.fromhex(signature))
                 verifying_key.verify(signature.encode("utf-8"), messageHashed, encoding="hex")
                 verification = True
                 print("signature is good!")

@@ -81,13 +81,15 @@ class TransactionBuilder:
             txiHash = hexed
 
             # Create a signing key from secretkey
-            print("Pause --------------")
+            # print("Pause --------------")
             # print("alert!--------------")
             # signing_key = ed25519.SigningKey(self.secretKey.encode("utf-8"))
             # sig = signing_key.sign(txiHash, encoding="base64")
             # verifying_key = signing_key.get_verifying_key()
             # verifying_key.verify(sig, txiHash, encoding="base64")
             # print("alert!--------------")
+
+            # Generate the signing key to sign the transaction
             signing_key, verify_key = self.generateKeyPair(self.secretKey)
             # # Sign the transaction using the signing key
             # print("alert!--------------")
