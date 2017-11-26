@@ -59,10 +59,17 @@ void printall(char *key, char *sha256){
     printf("Key:         "); printNum(key, 64);
     printf("Sha256:      "); printNum(sha256, 32);
     printf("Expected:    "); printNum(expected, 32);
+
+    if(strcmp(expected, sha256) == 0){
+        printf("\nSuccess!\n");
+    }else{
+        printf("\n Test Failed. Saadddd");
+    }
 }
 
 void encrypt(char *key, char *sha256){
     int i;
+    int j = 0;
     int ready;
 
     digitalWrite(MSG_PIN, 1);
@@ -75,7 +82,10 @@ void encrypt(char *key, char *sha256){
     digitalWrite(BLOCK_PIN, 0);
     digitalWrite(MSG_PIN, 0);
 
-    while (!digitalRead(DONE_PIN));
+    while (!digitalRead(DONE_PIN)){
+        printf("Waiting %d\n", j);
+        j++;
+    };
 
     for(i=0; i< 32; i++){
         sha256[i] = spiSendReceive(0);
