@@ -2,7 +2,6 @@ import hashlib
 import json
 import ed25519
 import binascii
-from binascii import unhexlify
 
 FEE_PER_TRANSACTION = 1
 
@@ -60,32 +59,23 @@ class Transaction:
             messageHash = str(transactionHash) + str(index) + str(address)
             messageHashed = hashlib.sha256(messageHash.encode('utf-8')).digest()
 
-            # Generate the signing and verifying keys from the public key
-            # print("length of publick key = ", len(publicKey))
-            # print("public Key", publicKey)
-            verifying_key = ed25519.VerifyingKey(publicKey.encode("ascii"), encoding="hex")
-            # print("signatureS", signature)
-            # print("messageHashS", messageHashed)
-
-            # strig = '3432626566663236633432393134343066636161663266383062396462646631'
-            # print("\n\n")
-            # print(verifying_key == ed25519.VerifyingKey(strig.encode("ascii"), encoding="hex"))
+            # Generate the verifying key from the public key
+            verifying_key = ed25519.VerifyingKey(binascii.a2b_hex(publicKey))
 
             # Check if the the signature of the transaction is valid by checking if we can verify the messageHash
             # by the signature.
             verification = None
             try:
-                # print(bytearray.fromhex(signature))
-                verifying_key.verify(signature.encode("utf-8"), messageHashed, encoding="hex")
+                verifying_key.verify(binascii.a2b_hex(signature), messageHashed)
                 verification = True
                 print("signature is good!")
             except ed25519.BadSignatureError:
                 verification = False
                 print("signature is bad!")
 
-            # change again later
-            # if not verification or True:
-            #     raise ValueError("Signed transaction is invalid by verification process")
+            # Verify the signed transaction
+            if not verification:
+                raise ValueError("Signed transaction is invalid by verification process")
 
         # Check if the sum of input transactions are enough for the sum of output transactions
         # plus fee.
