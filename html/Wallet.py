@@ -53,24 +53,24 @@ class Wallet:
         """ 
         Generate Key Public and Private Key Pairs using the EdDSA algorithm library
         """
-        keys = {} 
-        signing_key = ed25519.SigningKey(seed.encode('utf-8'))
+        keys = {}
+
+        # Note that seed is expected to be 64 hexadecimal characters
+        # Convert 64 hexadecimal characters to 32 bytes
+        seed_bytes = binascii.a2b_hex(seed)
+
+        # Create a signing key from 32 bytes
+        signing_key = ed25519.SigningKey(seed_bytes)
 
         # Obtain the verify key for a given signing key
         verify_key = signing_key.get_verifying_key()
 
-        # print("Ascii representation signing_key: {}  ".format(signing_key.to_ascii(encoding="hex")))
-        # print("Ascii representation verify_key: {} ".format(verify_key.to_ascii(encoding="hex")))
-
-        # print("Byte representation signing_key: {}  ".format(signing_key.to_bytes()))
-        # print("Byte representation verify_key: {} ".format(verify_key.to_bytes()))
-
-        # Convert secret key and public keys into hexadecimal format.
-        # keys["secret_key"] = signing_key.to_bytes().decode('utf-8')
-        #keys["public_key"] = verify_key.to_bytes().decode('utf-8')
-        keys["secret_key"] = signing_key.to_bytes().decode('utf-8')
-        keys["public_key"] = verify_key.to_ascii(encoding="hex").decode('ascii')
-        # print(keys)
+        # Store secret key of length 128 hexadecimal characters (64 bytes)
+        keys["secret_key"] = binascii.hexlify(signing_key.to_bytes()).decode('utf-8')
+        
+        # Store public key of length 64 hexadecimal characters (32 bytes)
+        keys["public_key"] = binascii.hexlify(verify_key.to_bytes()).decode('utf-8')
+        
         return keys
 
     def generateSecret(self, secret, wallet_pass=False):

@@ -2,6 +2,7 @@ import secrets
 import Transaction
 import json
 import hashlib
+import binascii
 import ed25519 # API Documentation is available at: https://github.com/warner/python-ed25519
 
 class TransactionBuilder:
@@ -97,7 +98,7 @@ class TransactionBuilder:
             # verify_key.verify(sig, txiHash, encoding="base64")
             # print("alert!--------------")
 
-            utxo["signature"] =  signing_key.sign(txiHash, encoding="hex").decode("utf-8")
+            utxo["signature"] = binascii.hexlify(signing_key.sign(txiHash)).decode("utf-8")
             # print("messageHashV", hexed)
             # print("signatureV", utxo["signature"])
 
@@ -141,7 +142,13 @@ class TransactionBuilder:
             Generate Key Public and Private Key Pairs using the EdDSA algorithm library
             """
             keys = {} 
-            signing_key = ed25519.SigningKey(seed.encode('utf-8'))
+            
+            # Note that seed is expected to be 64 hexadecimal characters
+            # Convert 64 hexadecimal characters to 32 bytes
+            seed_bytes = binascii.a2b_hex(seed)
+
+            # Create the signing key from 32 bytes
+            signing_key = ed25519.SigningKey(seed_bytes)
 
             # Obtain the verify key for a given signing key
             verify_key = signing_key.get_verifying_key()
