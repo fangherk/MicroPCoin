@@ -58,8 +58,8 @@ class Miner:
         # Get the first 2 pending transactions
         transactions = []
         if len(blockchainTransactions) >= 2:
-            transactions[0] = blockchainTransactions[0]
-            transactions[1] = blockchainTransactions[1]
+            transactions.append(blockchainTransactions[0])
+            transactions.append(blockchainTransactions[1])
         
         # Add fee transaction based on the number of transactions processed
         if len(transactions) > 0:

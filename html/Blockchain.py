@@ -168,7 +168,6 @@ class Blockchain:
             self.blocks.append(block)
             pickle.dump(self.blocks, open(self.dbName, "wb"))
             self.removeBlockTransactionsFromTransactions(block)
-
              # Emit a blockchain replacement
             self.ee.emit("addedBlock", block)
             return block
@@ -186,6 +185,7 @@ class Blockchain:
             # print(transaction)
             self.transactions.append(transaction)
             # print(self.transactions)
+            print("Transation added {}", transaction.id)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             self.ee.emit("addedTransaction", transaction)
             return transaction
@@ -197,6 +197,7 @@ class Blockchain:
         Remove all transactions in the new block from the list of pending transactions.
         """
 
+
         newtransactions = []
         # Remove any transaction in the pending transaction list that is in the new block.
         for transaction in self.transactions:
@@ -205,7 +206,7 @@ class Blockchain:
                 if transaction.id == transactionBlock.id:
                     found = True
                     continue
-            if(not found):
+            if not found:
                 newtransactions.append(transaction)
 
         # Update transactions object and write to the database
@@ -217,6 +218,14 @@ class Blockchain:
         """
         Check that the new block is valid based on its previous block.
         """
+
+        print("\n\n\n\n\n New block \n\n\n\n\n")
+        print(newBlock)
+        print("\n\n\n\n\n")
+
+        print("\n\n\n\n\n Previous block \n\n\n\n\n")
+        print(previousBlock)
+        print("\n\n\n\n\n")
         
         # Re-calculate the hash of the new block
         newBlockHash = newBlock.toHash()
@@ -246,9 +255,9 @@ class Blockchain:
             nfeeTransactions += (transaction.type == "fee")
             nrewardTransactions += (transaction.type == "reward")
             for inputTransaction in transaction.data["inputs"]:
-                sumOfInputsAmount += inputTransaction["amount"]
+                sumOfInputsAmount += int(inputTransaction["amount"])
             for outputTransaction in transaction.data["outputs"]:
-                sumOfOutputsAmount += outputTransaction["amount"]
+                sumOfOutputsAmount += int(outputTransaction["amount"])
 
         sumOfInputsAmount += MINING_REWARD
         if(sumOfInputsAmount < sumOfOutputsAmount):
@@ -267,13 +276,21 @@ class Blockchain:
         Check that the new transaction is valid based on the blockchain, e.g. not already in the blockchain.
         """
         # Check that the transaction, in terms of signature, etc.
-        # print(transaction)
         transaction.check()
 
+        print("\n\n\n\n\n New Transaction\n\n\n\n\n")
+        print(transaction)
+        print("\n\n\n\n\n")
+
+        print("\n\n\n\n\n All Transactions \n\n\n\n\n")
+        print(self.transactions)
+        print("\n\n\n\n\n")
+
+        # FIX THIS
         # Check if the transaction is already in the blockchain.
-        for each in self.transactions:
-            if(each.id == transaction.id):
-                raise ValueError("New transaction is already existed in the blockchain")
+        # for each in self.transactions:
+        #     if(each.id == transaction.id):
+        #         raise ValueError("New transaction already exists in the blockchain")
         
         # Check if the transaction is already spent
         for inputTransaction in transaction.data["inputs"]:

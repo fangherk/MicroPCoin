@@ -95,7 +95,7 @@ class Operator:
         utxo = self.blockchain.getUnspentTransactionsForAddress(addressId)
         summed = 0
         for outputTransaction in utxo:
-            summed += outputTransaction["amount"]
+            summed += int(outputTransaction["amount"])
 
         return summed
 
