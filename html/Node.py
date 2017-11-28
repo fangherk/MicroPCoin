@@ -94,11 +94,13 @@ class Node:
     def getConfirmation(self, peer, transactionID):
         """ Get the confirmation on the transaction ID """
         base_url = "http://{}:{}/blockchain/blocks/transactions/{}".format(peer, 5000, transactionID)
-        try:    
+        try:
             r = requests.get(base_url)
-            return True
+            return r.json()
         except:
-            return False
+            # maybe this could be None
+            return "Error"
+
 
     def getConfirmations(self, transactionID):
         """ Get the confrimation from all of the transactions """

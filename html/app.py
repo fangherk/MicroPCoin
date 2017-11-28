@@ -134,8 +134,6 @@ def createTransaction(walletId):
         toAddress = jsonData["to"]
         amount = jsonData["amount"]
         changeAddress = jsonData["changeAddress"]
-
-        # helperChecker()
         # Compute the hash of the provided password
         passwordHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
@@ -144,10 +142,6 @@ def createTransaction(walletId):
             # TODO: Change to 403 Error
             return "Error"
 
-        print("STARTING HERE-")
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
-        print("-------------------------------------------------------------------")
 
         # Create a transaction 
         newTransaction = operator.createTransaction(walletId, fromAddress, toAddress, amount, changeAddress)
@@ -155,31 +149,12 @@ def createTransaction(walletId):
         # Check if the transaction is signed correctly
         newTransaction.check()
         # print(newTransaction)
-
-        #helperChecker()
      
         # print(newTransaction)
         # Add thte transaction to the list of pending transaction
         transcationCreated = blockchain.addTransaction(Transaction.createTransactionObject(newTransaction))
 
         return str(transcationCreated)
-
-# def helperChecker():
-#     master = os.urandom(87)
-#     seed = hashlib.sha256(master).digest()
-#     signing_key = ed25519.SigningKey(seed)
-#     signing_key2 = ed25519.SigningKey(seed)
-#     sig = signing_key.sign(b"hello world", encoding="hex")
-#     verifying_key = ed25519.VerifyingKey(seed)
-#     vcorrect_key = signing_key.get_verifying_key()
-#     vcorrect_key2 = signing_key2.get_verifying_key()
-
-#     # assert verifying_key == vcorrect_key
-#     try:
-#       vcorrect_key2.verify(sig, b"hello world", encoding="hex")
-#       print("signature is good")
-#     except ed25519.BadSignatureError:
-#       print("signature is bad!")
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):
@@ -234,7 +209,7 @@ def peers():
 def getComfirmations(transactionId):
     if request.method == 'GET':
         numConfirmations = node.getConfirmations(transactionId)
-    return str(numConfirmations)
+    return str(json.dumps({"confirmations" : numConfirmations}))
 
 """
 Miner
