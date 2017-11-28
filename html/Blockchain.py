@@ -286,11 +286,11 @@ class Blockchain:
         print(self.transactions)
         print("\n\n\n\n\n")
 
-        # FIX THIS
         # Check if the transaction is already in the blockchain.
-        # for each in self.transactions:
-        #     if(each.id == transaction.id):
-        #         raise ValueError("New transaction already exists in the blockchain")
+        for block in self.blocks:
+            for each in block.transactions:
+                if(each.id == transaction.id):
+                    raise ValueError("New transaction already exists in the blockchain")
         
         # Check if the transaction is already spent
         for inputTransaction in transaction.data["inputs"]:

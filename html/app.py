@@ -95,7 +95,8 @@ def transaction(transactionId_val=None):
 def get_unspent_transactions(address):
     """ Get the unspent transactions for the address. """
     if request.method == 'GET':
-        return str(blockchain.getUnspentTransactionsForAddress(address))
+        unspentTransaction = blockchain.getUnspentTransactionsForAddress(address)
+        return str(json.dumps(unspentTransaction))
 
 """
 Operator
