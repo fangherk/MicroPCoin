@@ -30,18 +30,18 @@ endmodule
  */
 
 module uPcoin_controller(input logic clk,
-								 input logic message_load,
-								 input logic block_load,
-								 input logic doneSHA256,
-								 input logic [255:0] hash,
-								 output logic inputReady,
-								 output logic [255:0] previousHash,
-								 output logic done);
-								 
+                 input logic message_load,
+                 input logic block_load,
+                 input logic doneSHA256,
+                 input logic [255:0] hash,
+                 output logic inputReady,
+                 output logic [255:0] previousHash,
+                 output logic done);
+                 
   
   //  logic falling_block_load;
   logic numMessageBlocks;
-  logic rising_message_load, no_message_load;	
+  logic rising_message_load, no_message_load;  
   
   // Set up State transition diagram
   typedef enum logic [5:0]{getMsgSPI, startProcessingMsg, waitingProcessing, checkCorrectness, completedSHA} statetype;
@@ -49,62 +49,62 @@ module uPcoin_controller(input logic clk,
 
   
   always_ff @(posedge message_load)
-		rising_message_load <= 1;
-		
-		
+    rising_message_load <= 1;
+    
+    
   // State Transition Flip Flop
   always_ff @(posedge clk)
-		if (block_load && rising_message_load) state <= getMsgSPI;
-		else  state <= nextstate;
-		
-	
+    if (block_load && rising_message_load) state <= getMsgSPI;
+    else  state <= nextstate;
+    
+  
   // Handle the number of input blocks
   //   : Increment each time we start processing a new block
   always_ff @(posedge clk)
-		if (state == getMsgSPI)               numMessageBlocks <= 0;
-		else if (state == startProcessingMsg) numMessageBlocks <= numMessageBlocks + 1;
-		else											  numMessageBlocks <= numMessageBlocks;
+    if (state == getMsgSPI)               numMessageBlocks <= 0;
+    else if (state == startProcessingMsg) numMessageBlocks <= numMessageBlocks + 1;
+    else                        numMessageBlocks <= numMessageBlocks;
    
-	
+  
   // handle how hash and previousHash work
   //  a. Start with FIPS 180-4 previousHash on first message block\
   //  b. If we're done hashing, let the new previousHash be the old hash;
   //  c. Otherwise, keep the same previousHash
   always_ff @(posedge clk)
-	   if (numMessageBlocks == 0)    										previousHash <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
-		else if (state == checkCorrectness && doneSHA256)				previousHash <= hash;			
-		else 																			previousHash <= previousHash; 
-		
+     if (numMessageBlocks == 0)                        previousHash <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
+    else if (state == checkCorrectness && doneSHA256)        previousHash <= hash;      
+    else                                       previousHash <= previousHash; 
+    
   
   // Handle when to take more inputs
   always_ff @(posedge clk)
-		if (state == checkCorrectness && doneSHA256 && message_load == 1)		inputReady <= 1;
-		else																						inputReady <= inputReady;
+    if (state == checkCorrectness && doneSHA256 && message_load == 1)    inputReady <= 1;
+    else                                            inputReady <= inputReady;
   // Calculate when the block_load falls
   //  always @(negedge block_load)
-  //		falling_block_load <= 1;
-		
+  //    falling_block_load <= 1;
+    
   // Set up the next state logic
   always_comb
     case(state) 
-		// message_load == 1
-      getMsgSPI:					if (block_load == 0)           					  nextstate = startProcessingMsg; 
-										else													     nextstate = getMsgSPI;
-		startProcessingMsg:																     nextstate = waitingProcessing;
-		waitingProcessing:		if (doneSHA256) 									     nextstate = checkCorrectness;
-										else													     nextstate = waitingProcessing;
-		checkCorrectness:			if	(message_load == 0)								  nextstate = completedSHA;
-										else if (message_load == 1 && block_load == 0) nextstate = startProcessingMsg;
-										else 														  nextstate = checkCorrectness;
-		completedSHA:																			  nextstate = completedSHA;
+    // message_load == 1
+      getMsgSPI:          if (block_load == 0)                       nextstate = startProcessingMsg; 
+                    else                               nextstate = getMsgSPI;
+    startProcessingMsg:                                     nextstate = waitingProcessing;
+    waitingProcessing:    if (doneSHA256)                        nextstate = checkCorrectness;
+                    else                               nextstate = waitingProcessing;
+    checkCorrectness:      if  (message_load == 0)                  nextstate = completedSHA;
+                    else if (message_load == 1 && block_load == 0) nextstate = startProcessingMsg;
+                    else                               nextstate = checkCorrectness;
+    completedSHA:                                        nextstate = completedSHA;
     endcase
-	 
+   
 
   
   assign done =(state == completedSHA);
 
 endmodule
-								 
+                 
 
 /*  
  *  uPcoin_spi function 
@@ -144,7 +144,7 @@ endmodule
 module uPcoin_core(input logic clk, 
                    input logic block_load,
                    input logic message_load,
-						 input logic [255:0] previous_hash,
+             input logic [255:0] previous_hash,
                    input logic [511:0] block,
                    output logic doneSHA256,
                    output logic [255:0] hash);
@@ -170,24 +170,24 @@ module uPcoin_core(input logic clk,
   logic rising_message_load, falling_message_load;
   always_ff @(posedge message_load) 
   begin
-		rising_message_load <= 1;
+    rising_message_load <= 1;
   end
   always_ff @(negedge message_load) 
   begin
-		falling_message_load <= 1;
+    falling_message_load <= 1;
   end
 
   //  Set up the intermediate hash values to change only when returning to the doneHashing or intermediateState steps.
   //  Set up initial hashes.
   always_ff @(posedge clk)
     if (block_load) begin 
-		state <= preProcessing;
-	end
+    state <= preProcessing;
+  end
   else begin
     state <= nextstate;
     if(nextstate == intermediateStep) begin
       // intermediate_hash <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
-		intermediate_hash <= previous_hash;
+    intermediate_hash <= previous_hash;
     end else if(state == intermediateStep && nextstate == thirdStep) begin
       intermediate_hash <= intermediate_hash;
     end else if(state == waiting && nextstate == doneHashing) begin
@@ -223,7 +223,7 @@ module uPcoin_core(input logic clk,
   always_ff @(posedge clk)
     begin
       if (state == intermediateStep)      roundNumber <=0;
-      else  								      roundNumber <= roundNumber + 1;
+      else                        roundNumber <= roundNumber + 1;
 
       if(state == preProcessing)          messageScheduleCounter <= 0;
       else if(state == intermediateStep)  messageScheduleCounter <= messageScheduleCounter + 1;
@@ -256,7 +256,7 @@ module uPcoin_core(input logic clk,
         if(roundNumber < 16) W <= W;
         else                 W[counter3] <= newW;
       end
-		else W <= W;
+    else W <= W;
       
       // Update the variables in 6.2.2.4
       if(state == thirdStep) begin
@@ -269,10 +269,10 @@ module uPcoin_core(input logic clk,
         g <= new_g;
         h <= new_h;
       end
-		// Fix this, only set the initial hash value on the first block. Another Counter? 
-		else if(nextstate == intermediateStep) begin
-			{a,b,c,d,e,f,g,h} <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
-		end
+    // Fix this, only set the initial hash value on the first block. Another Counter? 
+    else if(nextstate == intermediateStep) begin
+      {a,b,c,d,e,f,g,h} <= 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
+    end
     end
 
   // Set up the next state logic, which depends on the roundNumber and the
@@ -281,16 +281,16 @@ module uPcoin_core(input logic clk,
     case(state) 
       preProcessing:
         if(falling_edge_block)           nextstate = intermediateStep;
-        else            		               nextstate = preProcessing;
-      intermediateStep:		                nextstate = thirdStep;
+        else                               nextstate = preProcessing;
+      intermediateStep:                    nextstate = thirdStep;
       thirdStep:
-        if(roundNumber == 63) 				       nextstate = waiting;
-        else										                   nextstate = thirdStep;
+        if(roundNumber == 63)                nextstate = waiting;
+        else                                       nextstate = thirdStep;
       waiting:
-        if(message_load == 0) 	          nextstate = doneHashing;
+        if(message_load == 0)             nextstate = doneHashing;
         else if(falling_edge_block == 1) nextstate = intermediateStep;
-        else 									                   nextstate = waiting;
-      doneHashing:				                   nextstate = doneHashing;			
+        else                                      nextstate = waiting;
+      doneHashing:                           nextstate = doneHashing;      
     endcase
 
 
@@ -339,7 +339,7 @@ endmodule
  */
 module thirdComp(input logic  [31:0] a,b,c,d,e,f,g,h,
                  input logic  [31:0] W, K, 
-                 output logic [31:0] new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);		
+                 output logic [31:0] new_a, new_b, new_c, new_d, new_e, new_f, new_g, new_h);    
   logic [31:0] T1, T2;
   logic [31:0] tempSigma1, tempSigma0, tempCh, tempMaj;
 
@@ -370,7 +370,7 @@ endmodule
 module prepareMessage(input logic [31:0] Wprev2, Wprev7, Wprev15, Wprev16,
                       output logic [31:0] newW);
   logic [31:0] output_sigma0;
-  logic [31:0] output_sigma1;	
+  logic [31:0] output_sigma1;  
   sigma0 s0(Wprev15 , output_sigma0);
   sigma1 s1(Wprev2, output_sigma1);
   assign newW = output_sigma1 + Wprev7 + output_sigma0 + Wprev16;
