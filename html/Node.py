@@ -21,7 +21,32 @@ class Node:
         return json.dumps(self, default=jsonDumper)
 
     def transmitChain(self):
-        # TODO: Find a way to signal an event occurring
+        """
+        On event signals, transmit data to other peers
+        """
+        @self.blockchain.ee.on("replacedBlockchain")
+        def data_handler(data):
+            if self.peers:
+                for peer in self.peers:
+                    self.sendLatestBlock(peer, data[-1])
+            else:
+                print("No peers to send to")
+        @self.blockchain.ee.on("addedBlock")
+        def data_handler(data):
+            print(type(data))
+            print(data)
+            if self.peers:
+                for peer in self.peers:
+                    self.sendLatestBlock(peer, data)
+            else: 
+                print("No peers to send to")
+        @self.blockchain.ee.on("addedTransaction")
+        def data_handler(data):
+            if self.peers:
+                for peer in self.peers:
+                    self.sendTransaction(peer, data)
+            else:
+                print("No peers to send to")
         return
         
     def connectWithPeer(self, peer):
@@ -63,7 +88,21 @@ class Node:
     def sendLatestBlock(self, peer, block):
         """ Send a block to your peer """
         base_url = "http://{}:{}/blockchain/blocks/latest".format(peer, 5000)
-        r = requests.put(base_url, data = {"block" : json.dumps(block)})
+
+        json_output = {}
+        json_output["index"] = block.index
+        json_output["previousHash"] = block.previousHash
+        json_output["timestamp"] = block.timestamp
+        json_output["nonce"] = block.nonce
+        
+
+        temp_transactions = []
+        for transaction in block.transactions:
+            temp_transactions.append(transaction.__dict__)
+        json_output["transactions"] = temp_transactions
+
+
+        r = requests.put(base_url, data = json.dumps(json_output))
         print("Sent Latest Block with error message {}".format(r.status_code))
         return r.status_code
 

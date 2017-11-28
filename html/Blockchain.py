@@ -3,6 +3,8 @@ import Transaction
 import pickle
 import json
 
+from pyee import EventEmitter
+
 POW_CURVE = 5
 EVERY_X_BLOCKS = 5
 BASE_DIFFICULTY = 9007199254740991  # Maximum Safe Integer for Javascript
@@ -20,6 +22,7 @@ class Blockchain:
             self.blocks.append(Block.getGenesis())
             self.dbName = dbName
             self.transactionsDbName = transactionsDbName
+            self.ee = EventEmitter()
             pickle.dump(self.blocks, open(dbName, "wb"))
             pickle.dump(self.transactions, open(transactionsDbName, "wb"))
         else:
@@ -138,7 +141,8 @@ class Blockchain:
         for blockToAdd in newBlocks:
             self.addBlock(blockToAdd)
             
-        # TODO: send signal saying that the blockchain has been replaced.
+        # Emit a blockchain replacement
+        self.ee.emit("replacedBlockchain", newBlock)
 
     def checkChain(self, chain):
         """
@@ -164,6 +168,9 @@ class Blockchain:
             self.blocks.append(block)
             pickle.dump(self.blocks, open(self.dbName, "wb"))
             self.removeBlockTransactionsFromTransactions(block)
+
+             # Emit a blockchain replacement
+            self.ee.emit("addedBlock", block)
             return block
         else:
             raise ValueError("can't add new block")
@@ -180,6 +187,7 @@ class Blockchain:
             self.transactions.append(transaction)
             # print(self.transactions)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
+            self.ee.emit("addedTransaction", transaction)
             return transaction
         else:
             raise ValueError("can't add new transaction")
