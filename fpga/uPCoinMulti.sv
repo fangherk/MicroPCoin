@@ -259,7 +259,7 @@ module uPcoin_core(input logic clk,
         W[0] <= block[511:480];
       end 
       else if(state == thirdStep) begin
-        if(roundNumber < 16) W <= W;
+        if(roundNumber < 15) W <= W;
         else                 W[counter3] <= newW;
       end
     else W <= W;
