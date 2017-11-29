@@ -10,7 +10,8 @@ module uPcoin(input logic  clk,
               output logic sdo,
               input logic  block_load,
               input logic  message_load,
-				  input logic  load,
+	      input logic  load,
+	      output logic inputReady,
               output logic done);
 
   logic [255:0] hash, previousHash;
@@ -81,7 +82,8 @@ module uPcoin_controller(input logic clk,
   // Handle when to take more inputs
   always_ff @(posedge clk)
     if (state == checkCorrectness && doneSHA256 && message_load == 1)    inputReady <= 1;
-    else                                                                 inputReady <= inputReady;
+	 else if(state == checkCorrectness)												 inputReady <= inputReady;
+	 else 																					 inputReady <= 0;
  
  // Calculate when the block_load falls by keeping track of previous block load
   always @(posedge clk)
