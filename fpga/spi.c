@@ -5,18 +5,69 @@
 
 // Libraries
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "EasyPIO.h"
+
+unsigned int findK(unsigned int l){
+    return (((448 - l -1) % 512) + 512) % 512;
+}
+
+unsigned long long swapBytesOrder(unsigned long long val){
+    unsigned long long answer = 0;
+    unsigned char buffer[20];
+    int i,j;
+    for(i=0;i<8;i++){
+        buffer[i] = (val & (0xFFULL << (i << 3))) >> (i << 3);
+    }
+    for(i=7,j=0;i>=0;i--,j++){
+        answer |= ((unsigned long long)buffer[i] << (j << 3));
+    }
+    return answer; 
+}
+
+void padding(char *input, unsigned char* output, int *len){
+    unsigned int inputLength = strlen(input) * 8;
+    unsigned int k = findK(inputLength);
+    unsigned int outputLength = inputLength  + 1+ k + 64;
+    outputLength /= 8;
+    memset(output, 0, sizeof(output));
+
+    unsigned long long l = 0;
+    int i = 0;
+    while(input[i] != '\0'){
+        output[i] = input[i];
+        output[i+1] = 0x80;
+        l += 8LL;
+        i++;
+    }
+
+    unsigned long long* lengthPosition = (unsigned long long*)(output + ((l + 1 + k) >> 3));
+    *lengthPosition = swapBytesOrder(l);
+    *len = outputLength;
+
+}
 
 
 // Constants
 #define MSG_PIN 23
 #define BLOCK_PIN 25
 #define DONE_PIN 24
+#define LOAD_PIN 18
 
 
 // Test Cases
 // "abc"
-char key[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
+char key1[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
+
+char key2[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
@@ -38,6 +89,14 @@ void printall(char*, char*);
 
 // Main
 void main(void){
+    unsigned char msg[2048] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
+    unsigned char output[2048];  
+    int paddingLength, i, nblock=0;  
+    padding(msg, output, &paddingLength);
+    for(i=0;i<paddingLength;i++){
+      if(i < 64) key1[i%64] = output[i];
+      else       key2[i%64] = output[i];
+    }
     char sha256[32];
 
     pioInit();
@@ -47,9 +106,35 @@ void main(void){
     pinMode(MSG_PIN, OUTPUT);
     pinMode(BLOCK_PIN, OUTPUT);
     pinMode(DONE_PIN, INPUT);
+    pinMode(LOAD_PIN, OUTPUT);
 
     // Hardware accelerated encryption
-    encrypt(key, sha256);
+  
+    digitalWrite(MSG_PIN, 1);
+    digitalWrite(BLOCK_PIN, 1);
+    encrypt(key1, sha256);
+    digitalWrite(BLOCK_PIN, 0);
+    digitalWrite(LOAD_PIN, 0);
+    delayMicros(1);
+  
+    while (!digitalRead(INPUT_READY_PIN)){
+        printf("Waiting\n");
+    };
+  
+    digitalWrite(BLOCK_PIN, 1);
+    encrypt(key2, sha256);
+    digitalWrite(BLOCK_PIN, 0);
+    digitalWrite(MSG_PIN, 0);
+
+    while (!digitalRead(DONE_PIN)){
+        printf("Waiting %d\n", j);
+        j++;
+    };
+
+    for(i=0; i< 32; i++){
+        sha256[i] = spiSendReceive(0);
+    }
+  
     printall(key, sha256);
 }
 
@@ -72,24 +157,12 @@ void encrypt(char *key, char *sha256){
     int j = 0;
     int ready;
 
-    digitalWrite(MSG_PIN, 1);
-    digitalWrite(BLOCK_PIN, 1);
 
     for(i = 0; i < 64; i++){
         spiSendReceive(key[i]);
     }
 
-    digitalWrite(BLOCK_PIN, 0);
-    digitalWrite(MSG_PIN, 0);
-
-    while (!digitalRead(DONE_PIN)){
-        printf("Waiting %d\n", j);
-        j++;
-    };
-
-    for(i=0; i< 32; i++){
-        sha256[i] = spiSendReceive(0);
-    }
+    
 
 }
 
