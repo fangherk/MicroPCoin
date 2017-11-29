@@ -39,7 +39,7 @@ unsigned char* padding(char *input, int *len){
     }
     unsigned long long* lengthPosition = (unsigned long long*)(output + ((l + 1 + k) >> 3));
     *lengthPosition = swapBytesOrder(l);
-    *len = (int)outputLength;
+    *len = (int)outputLength / 4;
 }
 
 int main()
@@ -50,8 +50,10 @@ int main()
   
   int paddingLength, i, nblock=0;  
   unsigned char *output = padding(msg, &paddingLength);
+  
+  printf("Total Length : %d\n", paddingLength);
   for(i=0;i<paddingLength;i++){
-    if(i%512 == 0){
+    if(i%128 == 0){
         printf("\nBlock %d\n", ++nblock);
     }
     printf("%02x", output[i]);
