@@ -56,119 +56,93 @@ void padding(char *input, unsigned char* output, int *len){
 #define LOAD_PIN 16
 #define INPUT_RDY_PIN 17
 
-// Test Cases
-// "abc"
-char key1[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
-
-char key2[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
-
-char key[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
-
-char expected[32] ={0xBA, 0x78, 0x16, 0xBF, 0x8F, 0x01, 0xCF, 0xEA,
-                    0x41, 0x41, 0x40, 0xDE, 0x5D, 0xAE, 0x22, 0x23,  
-                    0xB0, 0x03, 0x61, 0xA3, 0x96, 0x17, 0x7A, 0x9C,  
-                    0xB4, 0x10, 0xFF, 0x61, 0xF2, 0x00, 0x15, 0xAD};
-
-
 // Function prototypes
 void encrypt(char*, char*);
 void printNum(char*, int);
-void printall(char*, char*);
+//void printall(char*, char*);
 
 // Main
-void main(void){
-    unsigned char msg[2048] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
+int main(){
+    unsigned char key[64];
+    unsigned char msg[2048];
+    memset(msg, 0, sizeof(msg));
     unsigned char output[2048];  
-    int paddingLength, i, nblock=0;  
-    padding(msg, output, &paddingLength);
-    for(i=0;i<paddingLength;i++){
-      if(i < 64) key1[i%64] = output[i];
-      else       key2[i%64] = output[i];
-    }
-    char sha256[32];
+    FILE *fread = fopen("input_message.txt", "r");
+    fscanf(fread, "%s", msg);
+    msg[strlen(msg)] = 0;
+    fclose(fread);
 
-    FILE *fp;
+    int paddingLength, i, nblock=0;  
+    padding((char *)msg, output, &paddingLength);
+    
+    int nBlocks = paddingLength / 64;
+
     pioInit();
     spiInit(300000, 0);
-
-    delayMicros(1000);
-    //printf("slkdjflkf");
-    // Message_load, block_load, and done pins
     pinMode(MSG_PIN, OUTPUT);
     pinMode(BLOCK_PIN, OUTPUT);
     pinMode(LOAD_PIN, OUTPUT);
     pinMode(DONE_PIN, INPUT);
     pinMode(INPUT_RDY_PIN, INPUT);
 
-    // Hardware accelerated encryption
-  
-    digitalWrite(MSG_PIN, 1);
-    digitalWrite(BLOCK_PIN, 1);
-    digitalWrite(LOAD_PIN, 1);
-    for(i=0; i< 64; i++){
-        spiSendReceive(key1[i]);
+    char sha256[32];
+    memset(sha256, 0, sizeof(sha256));
+
+
+    int block;
+    for(block=0; block<nBlocks;block++){
+        for(i=0;i<64;i++) key[i] = output[64*block + i];
+
+        if(block == 0){
+            digitalWrite(MSG_PIN, 1);
+            digitalWrite(LOAD_PIN, 1);
+        }
+        digitalWrite(BLOCK_PIN, 1);
+    
+        for(i=0; i< 64; i++)  spiSendReceive(key[i]);
+
+        if(block == 0) digitalWrite(LOAD_PIN, 0);           
+        digitalWrite(BLOCK_PIN, 0);           
+    
+        if(block < nBlocks - 1){
+            while(!digitalRead(INPUT_RDY_PIN));
+        }
     }
-    digitalWrite(LOAD_PIN, 0);
-    digitalWrite(BLOCK_PIN, 0);
-    while(!digitalRead(INPUT_RDY_PIN));
-    digitalWrite(BLOCK_PIN, 1);
-    for(i=0;i<64;i++) spiSendReceive(key2[i]);
-    digitalWrite(BLOCK_PIN, 0);
-    delayMicros(100);
+  
+    delayMicros(5000);
     digitalWrite(MSG_PIN, 0);
 
-    while (!digitalRead(DONE_PIN)){
-      //  printf("Waiting1\n");
-    };
-    delayMicros(100);
-
+    while (!digitalRead(DONE_PIN));
     for(i=0; i< 32; i++){
         sha256[i] = spiSendReceive(0);
     }
-    delayMicros(1000); 
-    fp = fopen("output.txt", "w");
+
+    FILE *fp = fopen("output.txt", "w");
     for(i=0; i< 32; i++){
+     //   printf("%02x", (unsigned char)sha256[i]);
         fprintf(fp, "%02x", sha256[i]);
     }
     fclose(fp);
+    //sleep(1);
+
     // printall(key, sha256);
    // printall(key2, sha256);
+    return 0;
 }
 
 
 //Functions
 void printall(char *key, char *sha256){
-    printf("Key:         "); printNum(key, 64);
-    printf("Sha256:      "); printNum(sha256, 32);
-    printf("Expected:    "); printf("11111011011001111000111100110000001111000101111010110100001001111011010010110001100000001010000111111100010100111010111010010001\n");
-    //printNum(expected, 32);
-
-    if(strcmp(expected, sha256) == 0){
-        printf("\nSuccess!\n");
-    }else{
-        printf("\n Test Failed. Saadddd");
-    }
+//    printf("Key:         "); printNum(key, 64);
+//    printf("Sha256:      "); printNum(sha256, 32);
+//    printf("Expected:    "); printf("11111011011001111000111100110000001111000101111010110100001001111011010010110001100000001010000111111100010100111010111010010001\n");
+//    //printNum(expected, 32);
+//
+//    if(strcmp(expected, sha256) == 0){
+//        printf("\nSuccess!\n");
+//    }else{
+//        printf("\n Test Failed. Saadddd");
+//    }
 }
 
 void encrypt(char *key, char *sha256){
@@ -184,7 +158,8 @@ void printNum(char *text, int num){
     int i;
 
     for(i = 0; i < num; i++){
-        printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
+        printf("%02x ", text[i]);
+        //       printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
     }
     printf("\n"); 
 }

@@ -178,7 +178,8 @@ void printNum(char *text, int num){
     int i;
 
     for(i = 0; i < num; i++){
-        printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
+        printf("%02x", text[i]);
+        //printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
     }
     printf("\n"); 
 }
