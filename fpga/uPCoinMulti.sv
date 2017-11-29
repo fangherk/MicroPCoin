@@ -1,7 +1,7 @@
 /* 
  * uPcoin main module based on FIPS 180-4 for SHA 256
  * Herrick Fang and Teerapat (Mek) Jenrungrot
- * 11/21/2017
+ * 11/28/2017
  *
  */
 module uPcoin(input logic  clk,
@@ -10,8 +10,8 @@ module uPcoin(input logic  clk,
               output logic sdo,
               input logic  block_load,
               input logic  message_load,
-	      input logic  load,
-	      output logic inputReady,
+	           input logic  load,
+	           output logic inputReady,
               output logic done);
 
   logic [255:0] hash, previousHash;
@@ -455,5 +455,4 @@ module sigma1(input logic  [31:0] x,
   assign SHR10  = (x >> 10);
   assign out = ROTR17 ^ ROTR19 ^ SHR10;
 endmodule
-
 
