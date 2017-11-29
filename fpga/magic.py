@@ -1,19 +1,20 @@
 import subprocess
 ITER = 9
 
-def get_spi():
+def get_spi(input_msg):
    
-    block = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"
+    block = input_msg
     with open("input_message.txt", "w") as f:
         f.write(block)
 
     hashes = []
     
     for i in range(ITER):
-        subprocess.run(["sudo", "./call_spi"], timeout=2)
-        # subprocess.run(["sudo", "./call_spi"], timeout=2)
-        # subprocess.call(["sudo", "./call_spi"])
-        print("Block {:} is done".format(i))
+        try:
+            subprocess.run(["sudo", "./call_spi"], timeout=1)
+        except subprocess.TimeoutExpired: 
+            pass 
+        # print("Block {:} is done".format(i))
 
         with open("output.txt", "r") as f2:
             output = f2.read()
@@ -22,10 +23,12 @@ def get_spi():
         
         f2.close()
 
-    print("The hash is: \n\n")
-    print("\n")
-    print(hashes)
-    print(max(set(hashes), key =hashes.count))
+    #print("The hash is: \n\n")
+    # print("\n")
+    # print(hashes)
+    actual_hash = max(set(hashes), key =hashes.count)
+    print(actual_hash)
+    return actual_hash
 
 def main():
     get_spi()
