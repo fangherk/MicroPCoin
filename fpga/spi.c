@@ -54,7 +54,7 @@ void padding(char *input, unsigned char* output, int *len){
 #define BLOCK_PIN 25
 #define DONE_PIN 24
 #define LOAD_PIN 18
-
+#define INPUT_RDY_PIN 17
 
 // Test Cases
 // "abc"
@@ -106,6 +106,7 @@ void main(void){
     pinMode(MSG_PIN, OUTPUT);
     pinMode(BLOCK_PIN, OUTPUT);
     pinMode(DONE_PIN, INPUT);
+    pinMode(INPUT_RDY_PIN, INPUT);
     pinMode(LOAD_PIN, OUTPUT);
 
     // Hardware accelerated encryption
@@ -117,7 +118,7 @@ void main(void){
     digitalWrite(LOAD_PIN, 0);
     delayMicros(1);
   
-    while (!digitalRead(INPUT_READY_PIN)){
+    while (!digitalRead(INPUT_RDY_PIN)){
         printf("Waiting\n");
     };
   
