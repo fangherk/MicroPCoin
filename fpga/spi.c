@@ -53,7 +53,7 @@ void padding(char *input, unsigned char* output, int *len){
 #define MSG_PIN 23
 #define BLOCK_PIN 25
 #define DONE_PIN 24
-#define LOAD_PIN 18
+#define LOAD_PIN 16
 #define INPUT_RDY_PIN 17
 
 // Test Cases
@@ -68,6 +68,15 @@ char key1[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
 
 char key2[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
+
+char key[64] = {0x61, 0x62, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  
@@ -100,43 +109,45 @@ void main(void){
     char sha256[32];
 
     pioInit();
-    spiInit(244000, 0);
+    spiInit(300000, 0);
 
+    delayMicros(1000);
+    //printf("slkdjflkf");
     // Message_load, block_load, and done pins
     pinMode(MSG_PIN, OUTPUT);
     pinMode(BLOCK_PIN, OUTPUT);
+    pinMode(LOAD_PIN, OUTPUT);
     pinMode(DONE_PIN, INPUT);
     pinMode(INPUT_RDY_PIN, INPUT);
-    pinMode(LOAD_PIN, OUTPUT);
 
     // Hardware accelerated encryption
   
     digitalWrite(MSG_PIN, 1);
     digitalWrite(BLOCK_PIN, 1);
-    encrypt(key1, sha256);
-    digitalWrite(BLOCK_PIN, 0);
+    digitalWrite(LOAD_PIN, 1);
+    for(i=0; i< 64; i++){
+        spiSendReceive(key1[i]);
+    }
     digitalWrite(LOAD_PIN, 0);
-    delayMicros(1);
-  
-    while (!digitalRead(INPUT_RDY_PIN)){
-        printf("Waiting\n");
-    };
-  
-    digitalWrite(BLOCK_PIN, 1);
-    encrypt(key2, sha256);
     digitalWrite(BLOCK_PIN, 0);
+    while(!digitalRead(INPUT_RDY_PIN));
+    digitalWrite(BLOCK_PIN, 1);
+    for(i=0;i<64;i++) spiSendReceive(key2[i]);
+    digitalWrite(BLOCK_PIN, 0);
+    delayMicros(100);
     digitalWrite(MSG_PIN, 0);
 
     while (!digitalRead(DONE_PIN)){
-        printf("Waiting %d\n", j);
-        j++;
+      //  printf("Waiting1\n");
     };
+    delayMicros(100);
 
     for(i=0; i< 32; i++){
         sha256[i] = spiSendReceive(0);
     }
   
     printall(key, sha256);
+   // printall(key2, sha256);
 }
 
 
@@ -144,7 +155,8 @@ void main(void){
 void printall(char *key, char *sha256){
     printf("Key:         "); printNum(key, 64);
     printf("Sha256:      "); printNum(sha256, 32);
-    printf("Expected:    "); printNum(expected, 32);
+    printf("Expected:    "); printf("11111011011001111000111100110000001111000101111010110100001001111011010010110001100000001010000111111100010100111010111010010001\n");
+    //printNum(expected, 32);
 
     if(strcmp(expected, sha256) == 0){
         printf("\nSuccess!\n");
@@ -157,21 +169,16 @@ void encrypt(char *key, char *sha256){
     int i;
     int j = 0;
     int ready;
-
-
     for(i = 0; i < 64; i++){
         spiSendReceive(key[i]);
     }
-
-    
-
 }
 
 void printNum(char *text, int num){
     int i;
 
     for(i = 0; i < num; i++){
-        printf("%02x ", text[i]);
+        printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
     }
     printf("\n"); 
 }
