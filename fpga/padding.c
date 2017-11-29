@@ -23,23 +23,29 @@ unsigned long long swapBytesOrder(unsigned long long val){
     return answer; 
 }
 
-unsigned char* padding(char *input, int *len){
-    unsigned int inputLength = strlen(input);
+void padding(char *input, unsigned char* output,  int *len){
+    unsigned int inputLength = strlen(input) * 8;
     unsigned int k = findK(inputLength);
-    unsigned int outputLength = inputLength * 8 + k;
-    unsigned char *output = (unsigned char *)malloc(outputLength * sizeof(unsigned char));
-    
+    unsigned int outputLength = inputLength  + 1+ k + 64;
+    outputLength /= 8;
+    printf("inputLength: %d, k: %d, outputLength: %d\n", k, outputLength);
+    //output = (unsigned char *)malloc(outputLength * sizeof(unsigned char));
+    memset(output, 0, sizeof(output));
+
     unsigned long long l = 0;
     int i = 0;
-    while(input[i] != 0){
+    while(input[i] != '\0'){
         output[i] = input[i];
         output[i+1] = 0x80;
         l += 8LL;
         i++;
     }
+
+    printf("l: %lld", l);
     unsigned long long* lengthPosition = (unsigned long long*)(output + ((l + 1 + k) >> 3));
     *lengthPosition = swapBytesOrder(l);
-    *len = (int)outputLength / 8;
+    *len = outputLength;
+
 }
 
 int main()
@@ -47,13 +53,13 @@ int main()
   // Add the python message here.
   //  unsigned char msg[2048] = "abc";
   unsigned char msg[2048] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
-  
+  unsigned char output[2048];  
   int paddingLength, i, nblock=0;  
-  unsigned char *output = padding(msg, &paddingLength);
-  
+  padding(msg, output, &paddingLength);
+  // printf("%s\n",output); 
   printf("Total Length : %d\n", paddingLength);
   for(i=0;i<paddingLength;i++){
-    if(i%128 == 0){
+    if(i%64 == 0){
         printf("\nBlock %d\n", ++nblock);
     }
     printf("%02x", output[i]);
