@@ -177,7 +177,7 @@ def addressesWallet(walletId):
          # Check if the password hash is the same with the stored password hash
         if not operator.checkWalletPassword(walletId, passwordHash):
             # TODO: Change to 403 Error
-            return "Error"
+            return "Wrong Password"
 
         newAddress = operator.generateAddressForWallet(walletId)
         return str(json.dumps({"address": newAddress}))
