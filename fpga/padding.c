@@ -26,7 +26,7 @@ unsigned long long swapBytesOrder(unsigned long long val){
 unsigned char* padding(char *input, int *len){
     unsigned int inputLength = strlen(input);
     unsigned int k = findK(inputLength);
-    unsigned int outputLength = inputLength + k;
+    unsigned int outputLength = inputLength * 4 + k;
     unsigned char *output = (unsigned char *)malloc(outputLength * sizeof(unsigned char));
     
     unsigned long long l = 0;
