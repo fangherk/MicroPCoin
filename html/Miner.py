@@ -1,5 +1,6 @@
 import Block
 import Transaction
+import hashing
 import time
 import secrets
 import threading
@@ -119,7 +120,16 @@ class Miner:
             block.nonce += 1
 
             # Recalculate the hash
-            block.hash = block.toHash()
+            strInput = str(block.transactions) # str(block.index)  + str(block.previousHash) + str(block.timestamp) + str(block.nonce) # + str(block.transactions)
+            print("strInput: \t", strInput)
+            block.hash = hashing.get_spi(strInput)
+            print("\npi hash\n")
+            print(block.hash)
+            print("\n\n")
+            print(" hash calculation\n")
+            print(block.toHash())
+            print("\n\n")
+            # block.hash = block.toHash()
 
             # Recompute the difficulty of the block
             blockDifficulty = block.getDifficulty()
