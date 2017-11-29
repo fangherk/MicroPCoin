@@ -22,48 +22,39 @@ unsigned long long swapBytesOrder(unsigned long long val){
     return answer; 
 }
 
+unsigned char* padding(char *input, int *len){
+    unsigned int inputLength = strlen(input);
+    unsigned int outputLength = inputLength + findK(inputLength);
+    unsigned char *output = (unsigned char *)malloc(outputLength * sizeof(unsigned char));
+    
+    unsigned long long l = 0;
+    i = 0;
+    while(input[i] != 0){
+        output[i] = input[i];
+        output[i+1] = 0x80;
+        l += 8LL;
+        i++;
+    }
+    unsigned long long* lengthPosition = (unsigned long long*)(output + ((l + 1 + k) >> 3));
+    *lengthPosition = swapBytesOrder(l);
+    *len = (int)outputLength;
+}
+
 int main()
-{
-
-  unsigned char output[2048];
-  memset(output, 0, sizeof(output));
+{ 
   // Add the python message here.
-//  unsigned char msg[2048] = "abc";
+  //  unsigned char msg[2048] = "abc";
   unsigned char msg[2048] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
-  unsigned int i;
-  unsigned long long l=0LL;
-  // Generate the ith value of the char array
-  // Gather the number of char bits as well
-  i = 0;
-
-  while(msg[i] != '\0'){
-    output[i] = msg[i];
-    output[i+1] = 0x80;
-    l+=8LL;
-    i++;
+  
+  int paddingLength, i, nblock=0;  
+  unsigned char *output = padding(msg, &paddingLength);
+  for(i=0;i<paddingLength;i++){
+    if(i%512 == 0){
+        printf("\nBlock %d\n", ++nblock);
+    }
+    printf("%02x", output[i]);
   }
-
-  printf("i: %d, l: %d", i, l);
-
-  
-  // Find the equivalence relation value for k
-  // to satisfy l + 1 + k === 448 mod 512
-  unsigned int k = findK(l);
-  printf("l: %d\nk: %d\nl+1+k: %d\nl+1+k mod 512: %d\n",l,k,l+1+k, (l+1+k)%512);
-  printf("%x %lld\n",l, l);
-  printf("%lx\n", swapBytesOrder(l)); 
-  unsigned long long* lengthPosition = (unsigned long long*)(output + ((l + 1 + k) >> 3));
-  *lengthPosition = swapBytesOrder(l);
-
-  
-  unsigned int p = 0;
-  while(p < ((l+1+k+64)>>3)){
-    printf("%02x", output[p]);
-    p++;
-  }
-  
-
-  printf("\nDone!");
+    
 
     
   return 0;
