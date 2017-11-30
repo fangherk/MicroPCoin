@@ -41,7 +41,7 @@ module uPcoin_controller(input logic clk,
                          input logic block_load,
                          input logic doneSHA256,
                          input logic [255:0] hash,
-                         output logic inputReady,
+                         output logic actualInputReady,
                          output logic [255:0] previousHash,
                          output logic done);
                  
@@ -51,6 +51,9 @@ module uPcoin_controller(input logic clk,
   logic temp_block_load;
   logic falling_block_load;
   
+  logic inputReady;
+  
+  logic inputReady2, inputReady3, inputReady4, inputReady5;
   // Set up State transition diagram
   typedef enum logic [5:0]{getMsgSPI, startProcessingMsg, waitingProcessing, checkCorrectness, completedSHA} statetype;
   statetype state, nextstate;
@@ -81,9 +84,18 @@ module uPcoin_controller(input logic clk,
   
   // Handle when to take more inputs
   always_ff @(posedge clk)
-    if (state == checkCorrectness && doneSHA256 && message_load == 1)    inputReady <= 1;
-	 //else if(state == checkCorrectness)												 inputReady <= inputReady;
-	 else 																					 inputReady <= 0;
+    if (state == checkCorrectness && doneSHA256 && message_load == 1) inputReady <= 1;
+	  else 																					 inputReady <= 0;
+	 
+	 always_ff @(posedge clk)
+	 begin
+	   if(inputReady)  inputReady2 <= 1; else inputReady2 <= 0;
+	   if(inputReady2) inputReady3 <= 1; else inputReady3 <= 0;
+	   if(inputReady3) inputReady4 <= 1; else inputReady4 <= 0;
+	   if(inputReady4) inputReady5 <= 1; else inputReady5 <= 0;
+	 end
+	 
+	 assign actualInputReady = inputReady | inputReady2 | inputReady3 | inputReady4 | inputReady5;
  
  // Calculate when the block_load falls by keeping track of previous block load
   always @(posedge clk)
