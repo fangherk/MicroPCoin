@@ -82,7 +82,7 @@ module uPcoin_controller(input logic clk,
   // Handle when to take more inputs
   always_ff @(posedge clk)
     if (state == checkCorrectness && doneSHA256 && message_load == 1)    inputReady <= 1;
-	 else if(state == checkCorrectness)												 inputReady <= inputReady;
+	 //else if(state == checkCorrectness)												 inputReady <= inputReady;
 	 else 																					 inputReady <= 0;
  
  // Calculate when the block_load falls by keeping track of previous block load
@@ -103,7 +103,7 @@ module uPcoin_controller(input logic clk,
     waitingProcessing:    if (doneSHA256)                                nextstate = checkCorrectness;
                           else                                           nextstate = waitingProcessing;
     checkCorrectness:     if (falling_block_load == 1)                   nextstate = startProcessingMsg;
-								  else if  (message_load == 0)                   nextstate = completedSHA;
+								  else if  (message_load == 0 && doneSHA256)                   nextstate = completedSHA;
                           else                                           nextstate = checkCorrectness;
     completedSHA:                                                        nextstate = completedSHA;
     endcase
