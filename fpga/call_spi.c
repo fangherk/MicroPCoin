@@ -26,10 +26,12 @@ unsigned long long swapBytesOrder(unsigned long long val){
     return answer; 
 }
 
-void padding(char *input, unsigned char* output, int *len){
+void padding(unsigned char *input, unsigned char* output, int *len){
     unsigned int inputLength = strlen(input) * 8;
     unsigned int k = findK(inputLength);
     unsigned int outputLength = inputLength  + 1+ k + 64;
+    //printf("output length: %d\n", outputLength);
+    //printf("input length: %d\n", inputLength);
     outputLength /= 8;
     memset(output, 0, sizeof(output));
 
@@ -57,40 +59,44 @@ void padding(char *input, unsigned char* output, int *len){
 #define INPUT_RDY_PIN 17
 
 // Function prototypes
-void encrypt(char*, char*);
-void printNum(char*, int);
+void encrypt(unsigned char*, unsigned char*);
+void printNum(unsigned char*, int);
 //void printall(char*, char*);
 
+unsigned char msg[2000000];
+unsigned char output[2000000];  
 // Main
 int main(){
     unsigned char key[64];
-    unsigned char msg[2048];
     memset(msg, 0, sizeof(msg));
-    unsigned char output[2048];  
     FILE *fread = fopen("input_message.txt", "r");
-    fscanf(fread, "%s", msg);
+    // fscanf(fread, "%s", msg);
+    fgets(msg, sizeof(msg), fread);
     msg[strlen(msg)] = 0;
     fclose(fread);
 
     int paddingLength, i, nblock=0;  
-    padding((char *)msg, output, &paddingLength);
+    padding((unsigned char *)msg, output, &paddingLength);
+
+    //printNum(output, 192);
     
     int nBlocks = paddingLength / 64;
 
     pioInit();
-    spiInit(300000, 0);
+    spiInit(2244000, 0);
     pinMode(MSG_PIN, OUTPUT);
     pinMode(BLOCK_PIN, OUTPUT);
     pinMode(LOAD_PIN, OUTPUT);
     pinMode(DONE_PIN, INPUT);
     pinMode(INPUT_RDY_PIN, INPUT);
 
-    char sha256[32];
+    unsigned char sha256[32];
     memset(sha256, 0, sizeof(sha256));
 
 
     int block;
     for(block=0; block<nBlocks;block++){
+        // if(block % 10 == 0) printf("block %d\n", block);
         for(i=0;i<64;i++) key[i] = output[64*block + i];
 
         if(block == 0){
@@ -104,12 +110,11 @@ int main(){
         if(block == 0) digitalWrite(LOAD_PIN, 0);           
         digitalWrite(BLOCK_PIN, 0);           
     
-        if(block < nBlocks - 1){
+        if(block < nBlocks + 1){
             while(!digitalRead(INPUT_RDY_PIN));
         }
     }
   
-    delayMicros(5000);
     digitalWrite(MSG_PIN, 0);
 
     while (!digitalRead(DONE_PIN));
@@ -125,6 +130,7 @@ int main(){
     fclose(fp);
     //sleep(1);
 
+    // printNum(sha256, 32);
     // printall(key, sha256);
    // printall(key2, sha256);
     return 0;
@@ -132,7 +138,7 @@ int main(){
 
 
 //Functions
-void printall(char *key, char *sha256){
+void printall(unsigned char *key, unsigned char *sha256){
 //    printf("Key:         "); printNum(key, 64);
 //    printf("Sha256:      "); printNum(sha256, 32);
 //    printf("Expected:    "); printf("11111011011001111000111100110000001111000101111010110100001001111011010010110001100000001010000111111100010100111010111010010001\n");
@@ -145,7 +151,7 @@ void printall(char *key, char *sha256){
 //    }
 }
 
-void encrypt(char *key, char *sha256){
+void encrypt(unsigned char *key, unsigned char *sha256){
     int i;
     int j = 0;
     int ready;
@@ -154,12 +160,12 @@ void encrypt(char *key, char *sha256){
     }
 }
 
-void printNum(char *text, int num){
+void printNum(unsigned char *text, int num){
     int i;
 
     for(i = 0; i < num; i++){
-        printf("%02x ", text[i]);
-        //       printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
+        // printf("%02x", text[i]);
+        printf("%d%d%d%d",(text[i]&8) > 0, (text[i]&4)>0, (text[i]&2)>0, text[i]&1);
     }
     printf("\n"); 
 }

@@ -1,4 +1,5 @@
 import hashlib
+import hashing
 import json
 
 class Block:

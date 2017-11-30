@@ -219,13 +219,13 @@ class Blockchain:
         Check that the new block is valid based on its previous block.
         """
 
-        print("\n\n\n\n\n New block \n\n\n\n\n")
-        print(newBlock)
-        print("\n\n\n\n\n")
+        # print("\n\n\n\n\n New block \n\n\n\n\n")
+        # print(newBlock)
+        # print("\n\n\n\n\n")
 
-        print("\n\n\n\n\n Previous block \n\n\n\n\n")
-        print(previousBlock)
-        print("\n\n\n\n\n")
+        # print("\n\n\n\n\n Previous block \n\n\n\n\n")
+        # print(previousBlock)
+        # print("\n\n\n\n\n")
         
         # Re-calculate the hash of the new block
         newBlockHash = newBlock.toHash()

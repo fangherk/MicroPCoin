@@ -120,7 +120,8 @@ class Miner:
             block.nonce += 1
 
             # Recalculate the hash
-            strInput = str(block.transactions) # str(block.index)  + str(block.previousHash) + str(block.timestamp) + str(block.nonce) # + str(block.transactions)
+            strInput = str(block.index) + str(block.previousHash) + str(block.timestamp) + str(block.nonce) + str(block.transactions)
+            # strInput = str(block.index)  + str(block.previousHash) + str(block.timestamp) + str(block.nonce) + str(block.transactions)
             print("strInput: \t", strInput)
             block.hash = hashing.get_spi(strInput)
             print("\npi hash\n")
