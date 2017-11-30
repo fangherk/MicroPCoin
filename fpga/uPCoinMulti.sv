@@ -1,7 +1,7 @@
 /* 
  * uPcoin main module based on FIPS 180-4 for SHA 256
  * Herrick Fang and Teerapat (Mek) Jenrungrot
- * 11/28/2017
+ * 11/29/2017
  *
  */
 module uPcoin(input logic  clk,
@@ -16,10 +16,10 @@ module uPcoin(input logic  clk,
 
   logic [255:0] hash, previousHash;
   logic [511:0] message;
-  logic message_start;
+  logic message_start, doneSHA256;
   
   always_ff @(posedge clk)
-		if (load) message_start <= 0;
+	        if (load)        message_start <= 0;
 		else 		 message_start <= 1;
   
 
@@ -47,7 +47,7 @@ module uPcoin_controller(input logic clk,
                  
   
   //  logic falling_block_load;
-  logic [5:0] numMessageBlocks;
+  logic [31:0] numMessageBlocks;
   logic temp_block_load;
   logic falling_block_load;
   
@@ -115,7 +115,7 @@ module uPcoin_controller(input logic clk,
     waitingProcessing:    if (doneSHA256)                                nextstate = checkCorrectness;
                           else                                           nextstate = waitingProcessing;
     checkCorrectness:     if (falling_block_load == 1)                   nextstate = startProcessingMsg;
-								  else if  (message_load == 0 && doneSHA256)                   nextstate = completedSHA;
+			  else if  (message_load == 0 && doneSHA256)     nextstate = completedSHA;
                           else                                           nextstate = checkCorrectness;
     completedSHA:                                                        nextstate = completedSHA;
     endcase
@@ -467,4 +467,3 @@ module sigma1(input logic  [31:0] x,
   assign SHR10  = (x >> 10);
   assign out = ROTR17 ^ ROTR19 ^ SHR10;
 endmodule
-
