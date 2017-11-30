@@ -1,7 +1,7 @@
 /* 
  * uPcoin main module based on FIPS 180-4 for SHA 256
  * Herrick Fang and Teerapat (Mek) Jenrungrot
- * 11/28/2017
+ * 11/29/2017
  *
  */
 module uPcoin(input logic  clk,
@@ -16,10 +16,10 @@ module uPcoin(input logic  clk,
 
   logic [255:0] hash, previousHash;
   logic [511:0] message;
-  logic message_start;
+  logic message_start, doneSHA256;
   
   always_ff @(posedge clk)
-		if (load) message_start <= 0;
+	        if (load)        message_start <= 0;
 		else 		 message_start <= 1;
   
 
@@ -41,16 +41,19 @@ module uPcoin_controller(input logic clk,
                          input logic block_load,
                          input logic doneSHA256,
                          input logic [255:0] hash,
-                         output logic inputReady,
+                         output logic actualInputReady,
                          output logic [255:0] previousHash,
                          output logic done);
                  
   
   //  logic falling_block_load;
-  logic [5:0] numMessageBlocks;
+  logic [31:0] numMessageBlocks;
   logic temp_block_load;
   logic falling_block_load;
   
+  logic inputReady;
+  
+  logic inputReady2, inputReady3, inputReady4, inputReady5;
   // Set up State transition diagram
   typedef enum logic [5:0]{getMsgSPI, startProcessingMsg, waitingProcessing, checkCorrectness, completedSHA} statetype;
   statetype state, nextstate;
@@ -81,9 +84,18 @@ module uPcoin_controller(input logic clk,
   
   // Handle when to take more inputs
   always_ff @(posedge clk)
-    if (state == checkCorrectness && doneSHA256 && message_load == 1)    inputReady <= 1;
-	 else if(state == checkCorrectness)												 inputReady <= inputReady;
-	 else 																					 inputReady <= 0;
+    if (state == checkCorrectness && doneSHA256 && message_load == 1) inputReady <= 1;
+	  else 																					 inputReady <= 0;
+	 
+	 always_ff @(posedge clk)
+	 begin
+	   if(inputReady)  inputReady2 <= 1; else inputReady2 <= 0;
+	   if(inputReady2) inputReady3 <= 1; else inputReady3 <= 0;
+	   if(inputReady3) inputReady4 <= 1; else inputReady4 <= 0;
+	   if(inputReady4) inputReady5 <= 1; else inputReady5 <= 0;
+	 end
+	 
+	 assign actualInputReady = inputReady | inputReady2 | inputReady3 | inputReady4 | inputReady5;
  
  // Calculate when the block_load falls by keeping track of previous block load
   always @(posedge clk)
@@ -103,7 +115,7 @@ module uPcoin_controller(input logic clk,
     waitingProcessing:    if (doneSHA256)                                nextstate = checkCorrectness;
                           else                                           nextstate = waitingProcessing;
     checkCorrectness:     if (falling_block_load == 1)                   nextstate = startProcessingMsg;
-								  else if  (message_load == 0)                   nextstate = completedSHA;
+			  else if  (message_load == 0 && doneSHA256)     nextstate = completedSHA;
                           else                                           nextstate = checkCorrectness;
     completedSHA:                                                        nextstate = completedSHA;
     endcase
@@ -455,4 +467,3 @@ module sigma1(input logic  [31:0] x,
   assign SHR10  = (x >> 10);
   assign out = ROTR17 ^ ROTR19 ^ SHR10;
 endmodule
-
