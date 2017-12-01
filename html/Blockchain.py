@@ -243,6 +243,7 @@ class Blockchain:
 
         # Check that all transacations are valid
         for transaction in newBlock.transactions:
+            print(transaction, type(transaction))
             self.checkTransaction(transaction)
 
         # Check the sum of input transactions and output transactions to/from block.
