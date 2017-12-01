@@ -36,7 +36,7 @@ class Block:
         """
         strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.nonce) + str(self.transactions)
         strInput = strInput.replace("\"","\'")
-        print("String input\n", strInput)
+        # print("String input\n", strInput)
         return hashlib.sha256(strInput.encode('utf-8')).hexdigest()
 
 def getGenesis():

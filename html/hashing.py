@@ -11,16 +11,20 @@ def get_spi(input_msg):
 
     hashes = []
     
-    for i in range(ITER):
+    i = 0
+    while i  < ITER:
         try:
             subprocess.run(["sudo", "./call_spi"], timeout=1)
         except subprocess.TimeoutExpired: 
             pass 
         # print("Block {:} is done".format(i))
-        time.sleep(1)
+        time.sleep(0.2)
         with open("output.txt", "r") as f2:
             output = f2.read()
+        
         print(output)
+        if hashes.count(output) == 3: 
+            return output
         hashes.append(output)
         
         f2.close()

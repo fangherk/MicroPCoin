@@ -237,13 +237,13 @@ class Blockchain:
         if(newBlock.hash != newBlockHash):
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() <= self.getDifficulty(newBlock.index)):
-            print(newBlock)
+            # print(newBlock)
             raise ValueError("Expect new block's difficulty to be larger \
                               [newBlock.diif = {:}] [{:}]".format(newBlock.getDifficulty(), self.getDifficulty(newBlock.index)))
 
         # Check that all transacations are valid
         for transaction in newBlock.transactions:
-            print(transaction, type(transaction))
+            #print(transaction, type(transaction))
             self.checkTransaction(transaction)
 
         # Check the sum of input transactions and output transactions to/from block.

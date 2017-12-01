@@ -33,8 +33,8 @@ class Node:
                 print("No peers to send to")
         @self.blockchain.ee.on("addedBlock")
         def data_handler(data):
-            print(type(data))
-            print(data)
+            #print(type(data))
+            #print(data)
             if self.peers:
                 for peer in self.peers:
                     self.sendLatestBlock(peer, data)
@@ -74,7 +74,8 @@ class Node:
     def sendPeer(self, peer, peerToSend):
         """ Tell the other peer that you exist """ 
         base_url = "http://{}:{}/node/peers".format(peer, 5000)
-        r = requests.post(base_url, data = {"peer" : peerToSend})
+        headers = {'Content-Type' : 'application/json'}
+        r = requests.post(base_url, data = {"peer" : peerToSend}, headers =headers)
         return r.status_code
     
     def getLatestBlock(self, peer):
@@ -89,7 +90,7 @@ class Node:
         """ Send a block to your peer """
         base_url = "http://{}:{}/blockchain/blocks/latest".format(peer, 5000)
 
-        print("block\n", block)
+        # print("block\n", block)
         json_output = {}
         json_output["index"] = block.index
         json_output["previousHash"] = block.previousHash
@@ -102,9 +103,11 @@ class Node:
             temp_transactions.append(transaction.__dict__)
         json_output["transactions"] = temp_transactions
         
-        print("json_output", json_output)
+        print("\njson_output\n", json_output)
 
-        r = requests.put(base_url, data = json.dumps(json_output))
+        headers = {'Content-Type' : 'application/json'}
+        r = requests.put(base_url, data = json.dumps(json_output), headers = headers)
+        print("\n")
         print("Sent Latest Block with error message {}".format(r.status_code))
         return r.status_code
 
@@ -120,7 +123,8 @@ class Node:
         """ Send a transaction from peer to peer using wallet implementation """
         # TODO: Waiting on blockchain transactions
         base_url = "http://{}:{}/blockchain/transactions".format(peer, 5000)
-        r = requests.post(base_url, data = {"transaction" : json.dumps(transaction)})
+        headers = {'Content-Type' : 'application/json'}
+        r = requests.post(base_url, data = {"transaction" : json.dumps(transaction)}, headers=headers)
         return r.status_code
 
     def getTransactions(self, peer):

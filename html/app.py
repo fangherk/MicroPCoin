@@ -51,14 +51,14 @@ def latest_blocks():
         inputJSON = request.json
 
         # Create a block for the request
-        print("request\n", request.json)
+        print("\nrequest\n", request.json)
         blockToAdd = Block.Block()
         blockToAdd.index = inputJSON["index"]
         blockToAdd.previousHash = inputJSON["previousHash"]
         blockToAdd.timestamp = inputJSON["timestamp"]
         blockToAdd.nonce = inputJSON["nonce"]
         blockToAdd.transactions = inputJSON["transactions"]
-        print(blockToAdd)
+        # print(blockToAdd)
         blockToAdd.hash = blockToAdd.toHash()
 
         # Add block
