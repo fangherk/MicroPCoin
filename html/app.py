@@ -57,7 +57,7 @@ def latest_blocks():
         blockToAdd.previousHash = inputJSON["previousHash"]
         blockToAdd.timestamp = inputJSON["timestamp"]
         blockToAdd.nonce = inputJSON["nonce"]
-        blockToAdd.transactions = Transaction.createTransaction(inputJSON["transactions"])
+        blockToAdd.transactions = [Transaction.createTransaction(transaction) for transaction in inputJSON["transactions"]]
         # print(blockToAdd)
         blockToAdd.hash = blockToAdd.toHash()
 
