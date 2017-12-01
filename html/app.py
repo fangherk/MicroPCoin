@@ -22,7 +22,7 @@ uPCoin = Flask(__name__)
 blockchain = Blockchain.Blockchain("blockchainDb", "transactionDb")
 operator = Operator.Operator('walletDb', blockchain)
 miner = Miner.Miner(blockchain, None)
-node = Node.Node(os.environ["ip"], os.environ["port"], [], blockchain)
+node = Node.Node(os.environ["ip"], os.environ["port"], ["142.129.183.125"], blockchain)
 
 """ Main Page """
 @uPCoin.route('/')

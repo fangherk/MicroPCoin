@@ -89,6 +89,7 @@ class Node:
         """ Send a block to your peer """
         base_url = "http://{}:{}/blockchain/blocks/latest".format(peer, 5000)
 
+        print("block\n", block)
         json_output = {}
         json_output["index"] = block.index
         json_output["previousHash"] = block.previousHash
@@ -100,7 +101,8 @@ class Node:
         for transaction in block.transactions:
             temp_transactions.append(transaction.__dict__)
         json_output["transactions"] = temp_transactions
-
+        
+        print("json_output", json_output)
 
         r = requests.put(base_url, data = json.dumps(json_output))
         print("Sent Latest Block with error message {}".format(r.status_code))
