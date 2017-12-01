@@ -98,7 +98,7 @@ class Transaction:
 
 def createTransaction(data):
     """
-    Create a transaction from JSON object.
+    Create a transaction from dictionary.
     """
     transaction = Transaction()
     # print(data)
@@ -113,7 +113,7 @@ def createTransaction(data):
 
 def createTransactionObject(data):
     """
-    Create a transaction from JSON object.
+    Create a transaction from transaction.
     """
     transaction = Transaction()
     transaction.id = data.id
