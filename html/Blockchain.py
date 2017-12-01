@@ -237,6 +237,7 @@ class Blockchain:
         if(newBlock.hash != newBlockHash):
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() <= self.getDifficulty(newBlock.index)):
+            print(newBlock)
             raise ValueError("Expect new block's difficulty to be larger \
                               [newBlock.diif = {:}] [{:}]".format(newBlock.getDifficulty(), self.getDifficulty(newBlock.index)))
 

@@ -104,7 +104,7 @@ class Node:
         
         print("json_output", json_output)
 
-        r = requests.put(base_url, data = json.dumps(json_output))
+        r = requests.put(base_url, data = json_output)
         print("Sent Latest Block with error message {}".format(r.status_code))
         return r.status_code
 
