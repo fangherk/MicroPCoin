@@ -1,4 +1,4 @@
-# MicroPCoin
+x# MicroPCoin
 
 An implementation of a cryptocurrency protocol based on the Bitcoin Protocol.
 
@@ -24,21 +24,20 @@ TODO
 
 ## Next Steps
 
-- [ ] Raspberry Pi  
-  - [ ] HTTP Server, Networking Protocols
-  - [ ] Miner Operations, Interface to FPGA
-  - [ ] Node Operations, P2P Network
-  - [ ] Operator, wallet and addresses setup
-  - [ ] Blockchain Information transfer
-- [ ] FPGA  
-  - [ ] Miner, SHA-Algorithm Implementation
-  - [ ] Blockchain Verification
-- [ ] VGA Setup
+- [x] Raspberry Pi  
+  - [x] HTTP Server, Networking Protocols
+  - [x] Miner Operations, Interface to FPGA
+  - [x] Node Operations, P2P Network
+  - [x] Operator, wallet and addresses setup
+  - [x] Blockchain Information transfer
+- [x] FPGA  
+  - [x] Miner, SHA-Algorithm Implementation
+  - [x] Blockchain Verification
 
 ## Built With
 
 * [SystemVerilog](http://ieeexplore.ieee.org/document/6469140/) - The language used for the SHA-Algorithm.
-* [Python 3](https://www.python.org/) - HTTP Server Setup
+* [Python 3.6](https://www.python.org/) - HTTP Server Setup
 * C - Interfacing between Pi and FPGA.
 
 ## License
