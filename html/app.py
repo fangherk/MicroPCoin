@@ -51,6 +51,7 @@ def latest_blocks():
         inputJSON = request.json
 
         # Create a block for the request
+        print("request\n", request.json)
         blockToAdd = Block.Block()
         blockToAdd.index = inputJSON["index"]
         blockToAdd.previousHash = inputJSON["previousHash"]

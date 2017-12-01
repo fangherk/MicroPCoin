@@ -1,5 +1,7 @@
 import subprocess
-ITER = 9
+import time
+ITER = 15 
+
 
 def get_spi(input_msg):
    
@@ -15,10 +17,10 @@ def get_spi(input_msg):
         except subprocess.TimeoutExpired: 
             pass 
         # print("Block {:} is done".format(i))
-
+        time.sleep(1)
         with open("output.txt", "r") as f2:
             output = f2.read()
-
+        print(output)
         hashes.append(output)
         
         f2.close()

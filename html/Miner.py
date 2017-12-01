@@ -27,9 +27,11 @@ class Miner:
         # Create a base block with important information based on the previous block (e.g. hash, etc.)
         baseBlock = self.generateNextBlock(address, self.blockchain.getLastBlock(), self.blockchain.transactions)
 
+        print("base block:\n", baseBlock)
+        print("base block difficulty:\n", baseBlock.getDifficulty())
         # Spawn a thread to perform proof-of-work and wait for output.
         # Wait for the thread to finish before moving on.
-        thr = threading.Thread(target=self.proveWorkFor, args=(baseBlock, baseBlock.getDifficulty(),))
+        thr = threading.Thread(target=self.proveWorkFor, args=(baseBlock, self.blockchain.getDifficulty(baseBlock.index),))
         thr.start()
         thr.join()
 
@@ -121,6 +123,7 @@ class Miner:
 
             # Recalculate the hash
             strInput = str(block.index) + str(block.previousHash) + str(block.timestamp) + str(block.nonce) + str(block.transactions)
+            strInput = strInput.replace("\"", "\'")
             # strInput = str(block.index)  + str(block.previousHash) + str(block.timestamp) + str(block.nonce) + str(block.transactions)
             print("strInput: \t", strInput)
             block.hash = hashing.get_spi(strInput)
