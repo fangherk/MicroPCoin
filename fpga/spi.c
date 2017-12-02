@@ -109,7 +109,7 @@ void main(void){
     char sha256[32];
 
     pioInit();
-    spiInit(300000, 0);
+    spiInit(100000, 0);
 
     delayMicros(1000);
     //printf("slkdjflkf");

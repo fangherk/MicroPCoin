@@ -34,10 +34,14 @@ class Block:
         """
         Compute hash of the block
         """
-        strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.nonce) + str(self.transactions)
+        nonceBytesString = "{0:08X}".format(self.nonce)
+        nonceBytes = bytes([int(nonceBytesString[0:2], 16), int(nonceBytesString[2:4], 16), int(nonceBytesString[4:6], 16),  int(nonceBytesString[6:8], 16)])
+        strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.transactions)
         strInput = strInput.replace("\"","\'")
         # print("String input\n", strInput)
-        return hashlib.sha256(strInput.encode('utf-8')).hexdigest()
+        
+        print("toHash() BytesString: {:}".format(nonceBytes + strInput.encode('utf-8')))
+        return hashlib.sha256(nonceBytes + strInput.encode('utf-8')).hexdigest()
 
 def getGenesis():
     """

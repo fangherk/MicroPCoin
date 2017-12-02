@@ -119,20 +119,25 @@ class Miner:
             block.timestamp = int(time.time())
 
             # Change the nonce
-            block.nonce += 1
+            # block.nonce += 1
 
             # Recalculate the hash
-            strInput = str(block.index) + str(block.previousHash) + str(block.timestamp) + str(block.nonce) + str(block.transactions)
+            nonceBytesString = "{0:08X}".format(block.nonce)
+            nonceBytes = bytes([int(nonceBytesString[0:2], 16), int(nonceBytesString[2:4], 16), int(nonceBytesString[4:6], 16),  int(nonceBytesString[6:8], 16)])
+            strInput = str(block.index) + str(block.previousHash) + str(block.timestamp) + str(block.transactions)
             strInput = strInput.replace("\"", "\'")
+            bytesString = nonceBytes + strInput.encode('utf-8')
             # strInput = str(block.index)  + str(block.previousHash) + str(block.timestamp) + str(block.nonce) + str(block.transactions)
             # print("strInput: \t", strInput)
-            block.hash = hashing.get_spi(strInput)
-            # print("\npi hash\n")
-            # print(block.hash)
-            # print("\n\n")
-            # print(" hash calculation\n")
-            # print(block.toHash())
-            # print("\n\n")
+            print("BytesString: {:}".format(bytesString))
+            (block.hash, block.nonce) = hashing.get_spi(bytesString, difficulty)
+            print("block.nonce = {:}".format(block.nonce))
+            print("\npi hash\n")
+            print(block.hash)
+            print("\n\n")
+            print(" hash calculation\n")
+            print(block.toHash())
+            print("\n\n")
             # block.hash = block.toHash()
 
             # Recompute the difficulty of the block
