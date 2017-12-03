@@ -131,6 +131,10 @@ class Blockchain:
         for block in self.blocks:
             # print(block)
             for transaction in block.transactions:
+                try:
+                    transaction = Transaction.createTransaction(transaction)
+                except:
+                    pass
                 if transaction.id == transactionId:
                     return transaction
         # print("transaction checker!!!!")
