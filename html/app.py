@@ -125,8 +125,8 @@ def all_transactions(transactionId_val=None):
         POST: Add a transaction """
     if request.method == 'GET':
         response = blockchain.getAllTransactions()
-        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4 )
-        return reponse
+        response = json.dumps(response, default = lambda o:o.__dict__)
+        return response
 
     elif request.method == 'POST':
         transaction = Transaction.createTransaction(request.json)
