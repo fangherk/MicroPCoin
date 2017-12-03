@@ -144,9 +144,11 @@ class Node:
         base_url = "http://{}:{}/blockchain/transactions".format(peer, 5000)
         r = requests.get(base_url)
         json_data = r.json()
+        transactions = []
         for transaction in json_data:
             transaction = Transaction.createTransaction(transaction)
-            self.syncTransactions(transaction)
+            transactions.append(transaction)
+        self.syncTransactions(transactions)
         print("Done Syncing")
 
     def getConfirmation(self, peer, transactionID):
@@ -173,11 +175,12 @@ class Node:
     def syncTransactions(self, transactions):
         """ Add missing transactions """
         for transaction in transactions:
+            existent = None
             try:
                 existent = self.blockchain.getTransactionById(transaction.id)
             except ValueError:
-                print("Syncing transaction {}", existent.id)
-                self.blockchain.addTransaction(transaction.id)
+                print("Syncing transaction {}", transaction.id)
+                self.blockchain.addTransaction(transaction)
 
 
     def checkReceivedBlock(self, block):
