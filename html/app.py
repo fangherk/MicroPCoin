@@ -108,12 +108,12 @@ def get_block_by_index(index_val):
 def get_transaction(transactionId_val):
     """ Return the latest transaction by its id """
     if request.method == 'GET':
-        response = blockchain.getTransactionById(transactionId_val)
+        response = blockchain.getTransactionFromBlocks(transactionId_val)
         response = json.dumps(response, default = lambda o:o.__dict__)
         return response
     elif request.method == 'POST':
         transactionId_val = request.form["transactionId_val"]
-        response = blockchain.getTransactionById(transactionId_val)
+        response = blockchain.getTransactionFromBlocks(transactionId_val)
         response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
         return render_template("response.html", response=response)
 

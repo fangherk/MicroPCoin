@@ -211,7 +211,6 @@ class Blockchain:
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             self.ee.emit("addedTransaction", transaction)
             print("\t\t\t\n\n\n\n hello exiting?? \n\n\n\n")
-            sys.exit()
             return transaction
         else:
             raise ValueError("can't add new transaction")
