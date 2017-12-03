@@ -101,7 +101,8 @@ class Blockchain:
 
         Note2: Readjust the original formula so that the difficulty is incraesing instead of decreasing.
         """
-        return (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)
+        return len(self.blocks) // EVERY_X_BLOCKS
+        #return (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)
 
     def getAllTransactions(self):
         """

@@ -25,7 +25,7 @@ class Transaction:
         # jsonDumper is used for recursively converting an object to correct JSON output format
         def jsonDumper(obj):
             return obj.__dict__
-        return json.dumps(self, default=jsonDumper)
+        return str(json.dumps(self, default=jsonDumper))
     
     def toHash(self):
         """
