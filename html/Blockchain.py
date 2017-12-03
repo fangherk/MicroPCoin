@@ -131,8 +131,8 @@ class Blockchain:
         for block in self.blocks:
             # print(block)
             for transaction in block.transactions:
-                # print(transaction)
-                return transaction
+                if transaction.id == transactionId:
+                    return transaction
         # print("transaction checker!!!!")
         raise ValueError("Transaction with id={:} not found".format(transactionId))
 
