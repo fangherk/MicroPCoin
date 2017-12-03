@@ -55,9 +55,7 @@
             </div>
             <div class="card col-6 wallet" style="padding: 20px; border-color: rgb(38,89,106); background-color: rgba(38,89,106,0.5);">
                 <h2 style="text-indent: 20px;">Wallet</h2>
-                <div class="row" style="margin:auto !important;">
-                    <a href ="{{ url_for('wallets') }}" class="btn btn-outline-info btn-sm" style="box-sizing: inherit; margin:21px;"> Get All Wallets </a>
-                </div>
+                    <a href ="{{ url_for('wallets') }}" class="btn btn-outline-info btn-sm" style="box-sizing: inherit; margin:49px;"> Get All Wallets </a>
                 <form action="{{ url_for('wallets') }} " method="POST">
                     <input type="text" name="password" value ="password">
                     <input type="submit" class = "btn btn-outline-info btn-md" value="Make a Wallet">
@@ -89,7 +87,8 @@
 
             <div class="card col-6 node" style="padding: 20px; border-color: rgb(170,115,57); background-color: rgba(170,115,57,0.5);">
                 <h2 style="text-indent: 20px;">Node</h2>
-                <form action="{{ url_for('peers') }} " method="POST">
+                     <a href ="{{ url_for('peers') }}" class="btn btn-outline-warning btn-sm" style="box-sizing: inherit; margin:15px;"> Get Peers </a>
+               <form action="{{ url_for('peers') }} " method="POST">
                     <input type="text" name="peer" value="peer">
                     <input type="submit" class = "btn btn-outline-warning btn-md" value="Connect to Peers">
                 </form>
