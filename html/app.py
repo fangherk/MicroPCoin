@@ -1,5 +1,5 @@
 """ Library Imports """
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask.json import loads
 
 import os
@@ -22,13 +22,13 @@ uPCoin = Flask(__name__)
 blockchain = Blockchain.Blockchain("blockchainDb", "transactionDb")
 operator = Operator.Operator('walletDb', blockchain)
 miner = Miner.Miner(blockchain, None)
-node = Node.Node(os.environ["ip"], os.environ["port"], ["142.129.183.125"], blockchain)
+node = Node.Node(os.environ["ip"], os.environ["port"], [], blockchain)
 
 """ Main Page """
 @uPCoin.route('/')
 def index():
-    # TODO: Prettify This Page
-    return 'Welcome to uPCoin.'
+    # TODO: Prettify This Pag
+    return render_template("upCoin.html")
 
 
 """ Blockchain GET/POST requests """
@@ -45,13 +45,13 @@ def latest_blocks():
     if request.method == 'GET':
         return str(blockchain.getLastBlock())
     elif request.method == 'PUT':
-        print("I get here")
+        # print("I get here")
         print(request.json)
         # Take in the request
         inputJSON = request.json
 
         # Create a block for the request
-        print("\nrequest\n", request.json)
+        # print("\nrequest\n", request.json)
         blockToAdd = Block.Block()
         blockToAdd.index = inputJSON["index"]
         blockToAdd.previousHash = inputJSON["previousHash"]
@@ -64,27 +64,41 @@ def latest_blocks():
         # Add block
         return str(blockchain.addBlock(blockToAdd))
 
+@uPCoin.route('/blockchain/blocks/hash/', defaults={'hash_val':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/blocks/hash/<hash_val>', methods=['GET'])
-def get_block_by_hash(hash_val):
+def get_block_by_hash(hash_val=None):
     """ Return a block by its specified hash """
     if request.method == 'GET':
         return str(blockchain.getBlockByHash(hash_val))
+    elif request.method == 'POST':
+        hash_val = request.form["hash_val"]
+        return str(blockchain.getBlockByHash(hash_val))
 
+@uPCoin.route('/blockchain/blocks/index/', defaults={'index_val':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/blocks/index/<index_val>', methods=['GET'])
 def get_block_by_index(index_val):
     """ Return a block by its specified index """
     if request.method == 'GET':
         index_val = int(index_val)
         return str(blockchain.getBlockByIndex(index_val))
+    elif request.method == 'POST':
+        index_val = int(request.form["index_val"])
+        return str(blockchain.getBlockByIndex(index_val))
 
+
+@uPCoin.route('/blockchain/blocks/transactions/', defaults={'transactionId_val':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/blocks/transactions/<transactionId_val>', methods=['GET'])
 def get_transaction(transactionId_val):
     """ Return the latest transaction by its id """
     if request.method == 'GET':
         return str(blockchain.getTransactionById(transactionId_val))
+    elif request.method == 'POST':
+        transactionId_val = request.form["transactionId_val"]
+        return str(blockchain.getTransactionById(transactionId_val))
+
     
 @uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
-def transaction(transactionId_val=None):
+def all_transactions(transactionId_val=None):
     """ GET: Return the latest transactions
         POST: Add a transaction """
     if request.method == 'GET':
@@ -93,12 +107,18 @@ def transaction(transactionId_val=None):
         transaction = Transaction.createTransaction(request.json)
         return str(blockchain.addTransaction(transaction))
 
+@uPCoin.route('/blockchain/transactions/unspent/', defaults={'address':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
 def get_unspent_transactions(address):
     """ Get the unspent transactions for the address. """
     if request.method == 'GET':
         unspentTransaction = blockchain.getUnspentTransactionsForAddress(address)
         return str(json.dumps(unspentTransaction))
+    elif request.method == 'POST':
+        address = request.form["address"] 
+        unspentTransaction = blockchain.getUnspentTransactionsForAddress(address)
+        return str(json.dumps(unspentTransaction))
+
 
 """
 Operator
@@ -111,8 +131,14 @@ def wallets():
     if request.method == 'GET':
         return str(operator.getWallets())
     elif request.method == "POST":
-        jsonData = json.loads(request.data)
-        password = jsonData["password"]
+        print(request)
+        print("\n\n")
+        print("request data", request.data)
+        if request.data == b'':
+            password = request.form["password"]    
+        else:
+            jsonData = json.loads(request.data)
+            password = jsonData["password"]
         createdWallet = operator.createWalletFromPassword(password)
 
         # Create a wallet representation that hides the secret and passwordHash
@@ -121,31 +147,49 @@ def wallets():
         walletRepresentation["keypairs"] = createdWallet.keypairs
         return str(json.dumps(walletRepresentation))
 
+@uPCoin.route('/operator/wallets/', defaults={'walletId':None}, methods=['GET', 'POST'])
 @uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
 def getWalletById(walletId):
     """ Get a wallet by the specified ID """
     if request.method == "GET":
         return str(operator.getWalletById(walletId))
+    elif request.method == "POST":
+        walletId = request.form["walletId"]
+        return str(operator.getWalletById(walletId))
 
 @uPCoin.route('/operator/wallets/<walletId>/transactions', methods=['POST'])
 def createTransaction(walletId):
     """ Create a Transaction """
+
     if request.method == "POST":
+        print(request)
+        print("\n\n")
+        print("request data", request.data)
         # Obtain relevant data:
         #   password, fromAddress, toAddress, amount, changeAddress
-        jsonData = json.loads(request.data)
-        password = jsonData["password"]
-        fromAddress = jsonData["from"]
-        toAddress = jsonData["to"]
-        amount = jsonData["amount"]
-        changeAddress = jsonData["changeAddress"]
+        if walletId == "Form":
+            walletId = request.form["walletId"]
+            password = request.form["password"]
+            fromAddress = request.form["from"]
+            toAddress = request.form["to"]
+            amount = request.form["amount"]
+            changeAddress = request.form["changeAddress"]
+            if not walletId or not password or not fromAddress or not toAddress or not amount or not changeAddress: 
+                return "Incorrect Input"
+        else:
+            jsonData = json.loads(request.data)
+            password = jsonData["password"]
+            fromAddress = jsonData["from"]
+            toAddress = jsonData["to"]
+            amount = jsonData["amount"]
+            changeAddress = jsonData["changeAddress"]
         # Compute the hash of the provided password
         passwordHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
         # Check if the password hash is the same with the stored password hash
         if not operator.checkWalletPassword(walletId, passwordHash):
-            # TODO: Change to 403 Error
-            return "Error"
+            # TODO: Change to 403 error
+            return "Invalid Wallet Password. Try Again."
 
         # Create a transaction 
         newTransaction = operator.createTransaction(walletId, fromAddress, toAddress, amount, changeAddress)
@@ -170,8 +214,13 @@ def addressesWallet(walletId):
 
         # Obtain relevant data:
         #   password
-        jsonData = json.loads(request.data)
-        password = jsonData["password"]
+        if walletId == "Form":
+            walletId = request.form["walletId"]
+            password = request.form["password"]
+            print(password)
+        else:
+            jsonData = json.loads(request.data)
+            password = jsonData["password"]
 
         # Compute the hash of the provided password
         passwordHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
@@ -179,7 +228,7 @@ def addressesWallet(walletId):
          # Check if the password hash is the same with the stored password hash
         if not operator.checkWalletPassword(walletId, passwordHash):
             # TODO: Change to 403 Error
-            return "Wrong Password"
+            return "Wrong Wallet Password"
 
         newAddress = operator.generateAddressForWallet(walletId)
         return str(json.dumps({"address": newAddress}))
@@ -189,6 +238,10 @@ def addressesWallet(walletId):
 def getBalance(walletId, addressId):
     """ Get the balance of a wallet """
     if request.method == "GET":
+        if walletId == "Form":
+            walletId = request.form["walletId"]
+            addressId = request.form["addressId"]
+    
         # Get a balance for the specified addressId and walletId
         balance = operator.getBalanceForAddress(addressId)
         return str(json.dumps({"balance": balance}))
@@ -202,14 +255,20 @@ def peers():
     if request.method == 'GET':
         return str(node.peers)
     elif request.method == "POST":
-        jsonData = json.loads(request.data)
-        newPeer = node.connectWithPeer(jsonData["peer"])
+        if request.data == b'':
+            newPeer = node.connectWithPeer(request.form["peer"])
+        else:
+            jsonData = json.loads(request.data)
+            newPeer = node.connectWithPeer(jsonData["peer"])
         return str(newPeer)
 
 
-@uPCoin.route('/node/transactions/<transactionId>/confirmations', methods=['GET'])
-def getComfirmations(transactionId):
+@uPCoin.route('/node/transactions/<transactionId>/confirmations', methods=['GET', "POST"])
+def getConfirmations(transactionId):
     if request.method == 'GET':
+        numConfirmations = node.getConfirmations(transactionId)
+    elif request.method == 'POST':
+        transactionId = request.form["transactionId"] 
         numConfirmations = node.getConfirmations(transactionId)
     return str(json.dumps({"confirmations" : numConfirmations}))
 
@@ -222,8 +281,12 @@ def mine():
     if request.method == 'POST':
         # Obtain relevant data:
         #   rewardAddress
-        jsonData = json.loads(request.data)
-        rewardAddress = jsonData["rewardAddress"]
+
+        if request.data == b'':
+            rewardAddress = request.form["rewardAddress"]
+        else:
+            jsonData = json.loads(request.data)
+            rewardAddress = jsonData["rewardAddress"]
 
         # Mine with the reward address
         newBlock = miner.mine(rewardAddress)

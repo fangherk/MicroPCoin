@@ -102,6 +102,7 @@ class Blockchain:
         If the transaction is not found, ValueError() is raised.
         """
         for transaction in self.transactions:
+            # print(transaction.id)
             if transaction.id == id:
                 return transaction
         raise ValueError("Transaction with id={:} not found".format(id))
@@ -113,11 +114,11 @@ class Blockchain:
         If the transaction is not found, ValueError() is raised.
         """
         for block in self.blocks:
-            print(block)
+            # print(block)
             for transaction in block.transactions:
-                print(transaction)
+                # print(transaction)
                 return transaction
-        print("transaction checker!!!!")
+        # print("transaction checker!!!!")
         raise ValueError("Transaction with id={:} not found".format(transactionId))
 
     def replaceChain(self, newChain):
@@ -280,13 +281,13 @@ class Blockchain:
         # Check that the transaction, in terms of signature, etc.
         transaction.check()
 
-        print("\n\n\n\n\n New Transaction\n\n\n\n\n")
-        print(transaction)
-        print("\n\n\n\n\n")
+        #  print("\n\n\n\n\n New Transaction\n\n\n\n\n")
+        #  print(transaction)
+        #  print("\n\n\n\n\n")
 
-        print("\n\n\n\n\n All Transactions \n\n\n\n\n")
-        print(self.transactions)
-        print("\n\n\n\n\n")
+        #  print("\n\n\n\n\n All Transactions \n\n\n\n\n")
+        #  print(self.transactions)
+        #  print("\n\n\n\n\n")
 
         # Check if the transaction is already in the blockchain.
         for block in self.blocks:
