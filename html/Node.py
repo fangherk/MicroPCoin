@@ -1,5 +1,6 @@
 import requests
 import json 
+import os
 
 class Node:
     def __init__(self, host, port, peers, blockchain):
