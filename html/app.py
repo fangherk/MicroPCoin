@@ -103,8 +103,8 @@ def get_block_by_index(index_val):
 
 
 
-@uPCoin.route('/blockchain/blocks/transactions', defaults={'transactionId_val':None}, methods=['GET', 'POST'])
-@uPCoin.route('/blockchain/blocks/transactions/<transactionId_val>', methods=['GET'])
+@uPCoin.route('/blockchain/blocks/transactions/', defaults={'transactionId_val':None}, methods=['GET', 'POST'])
+@uPCoin.route('/blockchain/blocks/transactions/<transactionId_val>', methods=['GET', 'POST'])
 def get_transaction(transactionId_val):
     """ Return the latest transaction by its id """
     if request.method == 'GET':
@@ -129,6 +129,7 @@ def all_transactions(transactionId_val=None):
         return response
 
     elif request.method == 'POST':
+        print(request.json)
         transaction = Transaction.createTransaction(request.json)
         response = blockchain.addTransaction(transaction)
         response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
