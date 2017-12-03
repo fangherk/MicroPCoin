@@ -210,7 +210,7 @@ class Blockchain:
             print("Transation added {}", transaction.id)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             self.ee.emit("addedTransaction", transaction)
-            print(transaction)
+            print("\t\t\t\n\n\n\n hello exiting?? \n\n\n\n")
             sys.exit()
             return transaction
         else:
@@ -349,11 +349,11 @@ class Blockchain:
             except:
                 pass
             print("transaction checking here \n\n aslkdjflasd \n\n\n")
-            print(transaction.id)
-            print(pending.id)
-            print(transaction.id == pending.id)
+            # print(transaction.id)
+            # print(pending.id)
+            # print(transaction.id == pending.id)
             print("\n transaction + pending \n")
-            print(transaction, "\n", pending)
+            print(transaction, "\n", pending, "\n", "end\n")
             if transaction.id == pending.id or transaction == pending:
                 raise ValueError("pending transaction exists")
         return True

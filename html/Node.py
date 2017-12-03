@@ -140,6 +140,10 @@ class Node:
         """ Send a transaction from peer to peer using wallet implementation """
         base_url = "http://{}:{}/blockchain/transactions".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
+        print("transaction and dictionary from send Transaction \n\n")
+        print(transaction)
+        print(transaction.__dict__)
+        print("end ---- \n\n")
         r = requests.post(base_url, data = json.dumps(transaction.__dict__), headers=headers)
         return r.status_code
 
