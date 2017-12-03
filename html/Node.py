@@ -120,6 +120,7 @@ class Node:
         r = requests.get(base_url)
         json_data = r.json()
         for block in json_data:
+            block = Block.createBlock(block)
             self.checkReceivedBlock(block)
         
     def sendTransaction(self, peer, transaction):
@@ -176,7 +177,7 @@ class Node:
         """ Logic for appending and removing incoming blocks """
         currentBlocks = sorted(blocks, key=lambda x: x.index)
         latestBlockReceived = currentBlocks[len(currentBlocks) - 1]
-        latestBlockHeld = self.blockchain.getLatestBlock()
+        latestBlockHeld = self.blockchain.getLastBlock()
 
         # Don't do anything if the received blockchain is not longer than the actual blockchain
         if latestBlockReceived.index <= latestBlockHeld.index:

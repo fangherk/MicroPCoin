@@ -36,7 +36,8 @@ def index():
 @uPCoin.route('/blockchain/blocks', methods=['GET'])
 def get_blocks():
     """ Return all blocks in JSON format """
-    response= json.dumps(blockchain.getAllBlocks(), default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+    response= json.dumps(blockchain.getAllBlocks(), default = lambda o:o.__dict__)
+    return response
     return render_template("response.html", response=response)
 
 @uPCoin.route('/blockchain/blocks/latest', methods=['GET', 'PUT'])
@@ -45,7 +46,8 @@ def latest_blocks():
         PUT: Adda block to the blockchain """ 
     if request.method == 'GET':
         response = blockchain.getLastBlock()
-        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        response = json.dumps(response, default = lambda o:o.__dict__)
+        return response
         return render_template("response.html", response=response)
     elif request.method == 'PUT':
         # print("I get here")
@@ -303,6 +305,7 @@ def peers():
         return render_template("response.html", response=response)
     elif request.method == "POST":
         if request.data == b'':
+            print(request.form["peer"])
             newPeer = node.connectWithPeer(request.form["peer"])
         else:
             jsonData = json.loads(request.data)
