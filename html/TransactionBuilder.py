@@ -88,7 +88,7 @@ class TransactionBuilder:
 
         # Generate the outputs
         outputs = []
-        outputs.append({"amount":   self.totalAmount,
+        outputs.append({"amount":   int(self.totalAmount),
                         "address":  self.outputAddress})
 
         if changeAmount > 0:
