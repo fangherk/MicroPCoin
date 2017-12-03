@@ -57,7 +57,7 @@ class Node:
         """ Connect with the other Raspberry Pi Nodes """
         my_url = "http://{}:{}".format(self.host, self.port)
         for peer in newPeers:
-            if peer not in self.peers:
+            if peer not in self.peers and peer != os.environ["ip"]:
                 self.sendPeer(peer, self.host)  # send your own URL
                 self.peers.append(peer)         # add the url to the list of peers
                 self.initConnection(peer)       # create a connection with the peer
@@ -149,7 +149,6 @@ class Node:
 
     def getConfirmations(self, transactionID):
         """ Get the confrimation from all of the transactions """
-        # TODO: Implement Confirmations from transactions
         transactions = self.blockchain.getTransactionFromBlocks(transactionID)
         numConfirmations = 1
         for peer in self.peers:
