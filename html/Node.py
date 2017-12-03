@@ -61,9 +61,10 @@ class Node:
         """ Connect with the other Raspberry Pi Nodes """
         my_url = "http://{}:{}".format(self.host, self.port)
         for peer in newPeers:
-            if peer not in self.peers and peer != os.environ["ip"]:
-                self.sendPeer(peer, self.host)  # send your own URL
+            if (peer not in self.peers) and (peer != os.environ["ip"]):
+                print("trying to send to peer")
                 self.peers.append(peer)         # add the url to the list of peers
+                self.sendPeer(peer, self.host)  # send your own URL
                 self.initConnection(peer)       # create a connection with the peer
                 # self.broadcast(self.sendPeer, peer)
             else:
@@ -80,7 +81,8 @@ class Node:
         base_url = "http://{:}:{:}/node/peers".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
         print("does it hang? \n\n\n")
-        r = requests.post(base_url, data = {"peer" : peerToSend}, headers =headers)
+        peerDict = {"peer" : peerToSend}
+        r = requests.post(base_url, data = json.dumps(peerDict) , headers =headers)
         print("yeah buddy? \n\n\n")
         return r.status_code
     
@@ -107,7 +109,10 @@ class Node:
 
         temp_transactions = []
         for transaction in block.transactions:
-            temp_transactions.append(transaction.__dict__)
+            try:
+                temp_transactions.append(transaction.__dict__)
+            except: 
+                temp_transactions.append(transaction)
         json_output["transactions"] = temp_transactions
         
         print("\njson_output\n", json_output)
@@ -134,9 +139,9 @@ class Node:
         
     def sendTransaction(self, peer, transaction):
         """ Send a transaction from peer to peer using wallet implementation """
-        base_url = "http://{}:{}/blockchain/blocks/transactions".format(peer, 5000)
+        base_url = "http://{}:{}/blockchain/transactions".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
-        r = requests.post(base_url, data = {"transaction" : json.dumps(transaction.__dict__)}, headers=headers)
+        r = requests.post(base_url, data = json.dumps(transaction.__dict__), headers=headers)
         return r.status_code
 
     def getTransactions(self, peer):

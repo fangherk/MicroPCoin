@@ -152,13 +152,9 @@ class Blockchain:
         self.checkChain(newChain)
 
         # Replace blocks after diversion.
-        lastN = len(newChain.blocks) - len(self.blocks)
-        newBlocks = newChain.blocks[-lastN:]
-        for blockToAdd in newBlocks:
-            self.addBlock(blockToAdd)
-            
+        self.blocks = newChain.blocks            
         # Emit a blockchain replacement
-        self.ee.emit("replacedBlockchain", newBlocks)
+        self.ee.emit("replacedBlockchain", newChain.blocks)
 
     def checkChain(self, chain):
         """
@@ -312,14 +308,6 @@ class Blockchain:
         """
         # Check that the transaction, in terms of signature, etc.
         transaction.check()
-
-        #  print("\n\n\n\n\n New Transaction\n\n\n\n\n")
-        #  print(transaction)
-        #  print("\n\n\n\n\n")
-
-        #  print("\n\n\n\n\n All Transactions \n\n\n\n\n")
-        #  print(self.transactions)
-        #  print("\n\n\n\n\n")
 
         # Check if the transaction is already in the blockchain.
         for block in self.blocks:
