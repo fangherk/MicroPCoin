@@ -1,4 +1,5 @@
 import requests
+import Block
 import json 
 import os
 
@@ -74,7 +75,7 @@ class Node:
 
     def sendPeer(self, peer, peerToSend):
         """ Tell the other peer that you exist """ 
-        base_url = "http://{}:{}/node/peers".format(peer, 5000)
+        base_url = "http://{:}:{:}/node/peers".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
         r = requests.post(base_url, data = {"peer" : peerToSend}, headers =headers)
         return r.status_code
@@ -84,8 +85,9 @@ class Node:
         base_url = "http://{}:{}/blockchain/blocks/latest".format(peer, 5000)
         r = requests.get(base_url)
         json_data = r.json()
-        self.checkReceivedBlock(json_data[0])
-        return json_data[0]
+        received_block = Block.createBlock(json_data) 
+        self.checkReceivedBlock(received_block)
+        return json_data
 
     def sendLatestBlock(self, peer, block):
         """ Send a block to your peer """
@@ -122,7 +124,6 @@ class Node:
         
     def sendTransaction(self, peer, transaction):
         """ Send a transaction from peer to peer using wallet implementation """
-        # TODO: Waiting on blockchain transactions
         base_url = "http://{}:{}/blockchain/transactions".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
         r = requests.post(base_url, data = {"transaction" : json.dumps(transaction)}, headers=headers)
@@ -163,7 +164,7 @@ class Node:
         for transaction in transactions:
             existent = self.blockchain.getTransactionById(transaction.id)
             if not existent:
-                print("Syncing transaction {}", existent["id"])
+                print("Syncing transaction {}", existent.id)
                 self.blockchain.addTransaction(transaction.id)
 
 
@@ -173,18 +174,18 @@ class Node:
 
     def checkReceivedBlocks(self, blocks):
         """ Logic for appending and removing incoming blocks """
-        currentBlocks = sorted(blocks, lambda x: x["index"])
+        currentBlocks = sorted(blocks, key=lambda x: x.index)
         latestBlockReceived = currentBlocks[len(currentBlocks) - 1]
         latestBlockHeld = self.blockchain.getLatestBlock()
 
         # Don't do anything if the received blockchain is not longer than the actual blockchain
-        if latestBlockReceived["index"] <= latestBlockHeld["index"]:
+        if latestBlockReceived.index <= latestBlockHeld.index:
             print("----------------------------------")
             print("Received Block is not long enough!")
             print("----------------------------------")
             return False
 
-        if latestBlockHeld["hash"] == latestBlockReceived["previousHash"]:
+        if latestBlockHeld.hash == latestBlockReceived.previousHash:
             print("Adding the received block to our chain")
             self.blockchain.addBlock(latestBlockReceived)
         elif len(currentBlocks) == 1:
