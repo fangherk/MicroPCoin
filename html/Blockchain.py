@@ -17,14 +17,28 @@ class Blockchain:
         """
         if init:
             # Create genesis block
-            self.blocks = []
-            self.transactions = []
-            self.blocks.append(Block.getGenesis())
+            
+            # temp_block = pickle.load(open(dbName, "rb"))
+            # temp_transactions = pickle.load(open(transactionsDbName, "rb"))
+            try:
+                temp_block = open(dbName, "rb")
+                temp_block = pickle.load(temp_block)
+                self.blocks = temp_block
+            except OSError as e:
+                self.blocks = []
+                self.blocks.append(Block.getGenesis())
+                pickle.dump(self.blocks, open(dbName, "wb"))
+            try:
+                temp_transactions = pickle.load(open(transactionsDbName, "rb"))
+                self.transactions = temp_transactions
+            except OSError as e:
+                self.transactions = []
+                pickle.dump(self.transactions, open(transactionsDbName, "wb"))
             self.dbName = dbName
             self.transactionsDbName = transactionsDbName
             self.ee = EventEmitter()
-            pickle.dump(self.blocks, open(dbName, "wb"))
-            pickle.dump(self.transactions, open(transactionsDbName, "wb"))
+            # pickle.dump(self.blocks, open(dbName, "wb"))
+            # pickle.dump(self.transactions, open(transactionsDbName, "wb"))
         else:
             # Create a blockchain from given files
             blockDb = pickle.load(open(dbName, "rb"))
