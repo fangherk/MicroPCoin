@@ -353,4 +353,4 @@ def mine():
 
 
 if __name__=='__main__':
-    uPCoin.run(debug=True, host=os.environ["ip"])
+    uPCoin.run(threaded=True, debug=True, host=os.environ["ip"])

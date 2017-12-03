@@ -261,7 +261,11 @@ class Blockchain:
             try:
                 self.checkTransaction(Transaction.createTransactionObject(transaction))
             except:
+                pass
+            try:
                 self.checkTransaction(Transaction.createTransaction(transaction))
+            except:
+                pass
         # Check the sum of input transactions and output transactions to/from block.
         # The sum of input transactions must be greter than or equal to the sum of 
         # output transactions.

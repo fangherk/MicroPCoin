@@ -107,7 +107,7 @@ class Node:
 
         temp_transactions = []
         for transaction in block.transactions:
-            temp_transactions.append(transaction.__dict__)
+            temp_transactions.append(transaction)
         json_output["transactions"] = temp_transactions
         
         print("\njson_output\n", json_output)
