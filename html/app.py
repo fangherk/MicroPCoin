@@ -131,9 +131,13 @@ def all_transactions(transactionId_val=None):
     elif request.method == 'POST':
         print(request.json)
         transaction = Transaction.createTransaction(request.json)
-        response = blockchain.addTransaction(transaction)
-        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
-        return render_template("response.html", response=response)
+        try: 
+            blockchain.getTransactionById(transaction.id)
+            return str("already exists")
+        except:
+            response = blockchain.addTransaction(transaction)
+            response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+            return render_template("response.html", response=response)
 
 @uPCoin.route('/blockchain/transactions/unspent/', defaults={'address':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
