@@ -158,14 +158,20 @@ class Blockchain:
             self.addBlock(blockToAdd)
             
         # Emit a blockchain replacement
-        self.ee.emit("replacedBlockchain", newBlock)
+        self.ee.emit("replacedBlockchain", newBlocks)
 
     def checkChain(self, chain):
         """
         Check if the input blockchain is valid. 
         """
+        print("Check Chain \n\n")
+        print(self.blocks[0])
+        print(type(self.blocks[0]))
+        print(chain.blocks[0])
+        print(type(chain.blocks[0]))
+        print(self.blocks[0] == chain.blocks[0])
         # Check if the genesis block is the same
-        if(self.blocks[0] != chain.blocks[0]):
+        if(self.blocks[0].hash != chain.blocks[0].hash):
             raise ValueError("Genesis blocks aren't the same")
 
         # Check that every two consecutive blocks' hash and previousHash are valid

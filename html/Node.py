@@ -113,7 +113,7 @@ class Node:
         print("\njson_output\n", json_output)
 
         headers = {'Content-Type' : 'application/json'}
-        r = requests.put(base_url, data = json.dumps(json_output), headers = headers)
+        r = requests.put(base_url, data = str(json_output), headers = headers)
         print("\n")
         print("Sent Latest Block with error message {}".format(r.status_code))
         return r.status_code
