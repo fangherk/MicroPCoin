@@ -109,8 +109,8 @@ def get_transaction(transactionId_val):
     """ Return the latest transaction by its id """
     if request.method == 'GET':
         response = blockchain.getTransactionById(transactionId_val)
-        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
-        return render_template("response.html", response=response)
+        response = json.dumps(response, default = lambda o:o.__dict__)
+        return response
     elif request.method == 'POST':
         transactionId_val = request.form["transactionId_val"]
         response = blockchain.getTransactionById(transactionId_val)
@@ -125,8 +125,8 @@ def all_transactions(transactionId_val=None):
         POST: Add a transaction """
     if request.method == 'GET':
         response = blockchain.getAllTransactions()
-        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
-        return render_template("response.html", response=response)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4 )
+        return reponse
 
     elif request.method == 'POST':
         transaction = Transaction.createTransaction(request.json)

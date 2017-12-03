@@ -1,4 +1,6 @@
 import requests
+import Blockchain
+import Transaction
 import Block
 import json 
 import os
@@ -119,9 +121,13 @@ class Node:
         base_url = "http://{}:{}/blockchain/blocks".format(peer, 5000)
         r = requests.get(base_url)
         json_data = r.json()
+        
+        blocks = []
         for block in json_data:
             block = Block.createBlock(block)
-            self.checkReceivedBlock(block)
+            blocks.append(block)
+
+        self.checkReceivedBlocks(blocks)
         
     def sendTransaction(self, peer, transaction):
         """ Send a transaction from peer to peer using wallet implementation """
@@ -136,6 +142,7 @@ class Node:
         r = requests.get(base_url)
         json_data = r.json()
         for transaction in json_data:
+            transaction = Transaction.createTransaction(transaction)
             self.syncTransactions(transaction)
         print("Done Syncing")
 
@@ -163,8 +170,9 @@ class Node:
     def syncTransactions(self, transactions):
         """ Add missing transactions """
         for transaction in transactions:
-            existent = self.blockchain.getTransactionById(transaction.id)
-            if not existent:
+            try:
+                existent = self.blockchain.getTransactionById(transaction.id)
+            except ValueError:
                 print("Syncing transaction {}", existent.id)
                 self.blockchain.addTransaction(transaction.id)
 
@@ -195,7 +203,8 @@ class Node:
                 self.getBlocks(peer)
         else: 
             # Received block is longer than current chain, so replace it
-            self.blockchain.replaceChain(currentBlocks)
+            newBlockchain = Blockchain.createBlockchain(self.blockchain, currentBlocks)
+            self.blockchain.replaceChain(newBlockchain)
 
             
             

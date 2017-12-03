@@ -353,4 +353,10 @@ class Blockchain:
                 unspentTransactionOutput.append(outputTransaction)
         return unspentTransactionOutput
         
-    
+def createBlockchain(blockchain, blocks):
+    newBlockchain = Blockchain(blockchain.dbName, blockchain.transactionsDbName, init=False)
+    newBlockchain.blocks = blocks
+    newBlockchain.transactions = []
+
+    return newBlockchain
+
