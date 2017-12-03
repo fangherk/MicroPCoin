@@ -101,7 +101,7 @@ class Blockchain:
 
         Note2: Readjust the original formula so that the difficulty is incraesing instead of decreasing.
         """
-        return len(self.blocks) // EVERY_X_BLOCKS
+        return index // EVERY_X_BLOCKS
         #return (((((index or len(self.blocks)) + 1) // EVERY_X_BLOCKS) + 1) ** POW_CURVE)
 
     def getAllTransactions(self):
@@ -259,7 +259,9 @@ class Blockchain:
         if(newBlock.hash != newBlockHash):
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() <= self.getDifficulty(newBlock.index)):
-            # print(newBlock)
+            print("\n\n")
+            print(newBlock)
+            print(newBlock)
             raise ValueError("Expect new block's difficulty to be larger \
                               [newBlock.diif = {:}] [{:}]".format(newBlock.getDifficulty(), self.getDifficulty(newBlock.index)))
 
