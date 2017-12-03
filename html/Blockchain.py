@@ -259,8 +259,10 @@ class Blockchain:
         # Check that all transacations are valid
         for transaction in newBlock.transactions:
             print(transaction, type(transaction))
-            self.checkTransaction(Transaction.createTransactionObject(transaction))
-
+            try:
+                self.checkTransaction(Transaction.createTransactionObject(transaction))
+            except:
+                self.checkTransaction(Transaction.createTransaction(transaction))
         # Check the sum of input transactions and output transactions to/from block.
         # The sum of input transactions must be greter than or equal to the sum of 
         # output transactions.

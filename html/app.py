@@ -125,8 +125,8 @@ def all_transactions(transactionId_val=None):
         POST: Add a transaction """
     if request.method == 'GET':
         response = blockchain.getAllTransactions()
-        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4 )
-        return reponse
+        response = json.dumps(response, default = lambda o:o.__dict__)
+        return response
 
     elif request.method == 'POST':
         transaction = Transaction.createTransaction(request.json)
@@ -308,7 +308,8 @@ def peers():
             print(request.form["peer"])
             newPeer = node.connectWithPeer(request.form["peer"])
         else:
-            jsonData = json.loads(request.data)
+            print(request.data)
+            jsonData = request.json
             newPeer = node.connectWithPeer(jsonData["peer"])
         return str(newPeer)
 
