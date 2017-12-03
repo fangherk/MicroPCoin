@@ -1,6 +1,6 @@
 """ Library Imports """
 from flask import Flask, jsonify, request, render_template
-from flask.json import loads
+from flask.json import loads, JSONEncoder
 
 import os
 import hashlib
@@ -36,14 +36,17 @@ def index():
 @uPCoin.route('/blockchain/blocks', methods=['GET'])
 def get_blocks():
     """ Return all blocks in JSON format """
-    return str(blockchain.getAllBlocks())
+    response= json.dumps(blockchain.getAllBlocks(), default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+    return render_template("response.html", response=response)
 
 @uPCoin.route('/blockchain/blocks/latest', methods=['GET', 'PUT'])
 def latest_blocks():
     """ GET: Return the latest block in JSON format
         PUT: Adda block to the blockchain """ 
     if request.method == 'GET':
-        return str(blockchain.getLastBlock())
+        response = blockchain.getLastBlock()
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == 'PUT':
         # print("I get here")
         print(request.json)
@@ -62,17 +65,24 @@ def latest_blocks():
         blockToAdd.hash = blockToAdd.toHash()
 
         # Add block
-        return str(blockchain.addBlock(blockToAdd))
+        response = blockchain.addBlock(blockToAdd)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
 
 @uPCoin.route('/blockchain/blocks/hash/', defaults={'hash_val':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/blocks/hash/<hash_val>', methods=['GET'])
 def get_block_by_hash(hash_val=None):
     """ Return a block by its specified hash """
     if request.method == 'GET':
-        return str(blockchain.getBlockByHash(hash_val))
+        response = blockchain.getBlockByHash(hash_val)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == 'POST':
         hash_val = request.form["hash_val"]
-        return str(blockchain.getBlockByHash(hash_val))
+        response = blockchain.getBlockByHash(hash_val)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
+
 
 @uPCoin.route('/blockchain/blocks/index/', defaults={'index_val':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/blocks/index/<index_val>', methods=['GET'])
@@ -80,10 +90,15 @@ def get_block_by_index(index_val):
     """ Return a block by its specified index """
     if request.method == 'GET':
         index_val = int(index_val)
-        return str(blockchain.getBlockByIndex(index_val))
+        response = blockchain.getBlockByIndex(index_val)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == 'POST':
         index_val = int(request.form["index_val"])
-        return str(blockchain.getBlockByIndex(index_val))
+        response = blockchain.getBlockByIndex(index_val)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
+
 
 
 @uPCoin.route('/blockchain/blocks/transactions/', defaults={'transactionId_val':None}, methods=['GET', 'POST'])
@@ -91,10 +106,15 @@ def get_block_by_index(index_val):
 def get_transaction(transactionId_val):
     """ Return the latest transaction by its id """
     if request.method == 'GET':
-        return str(blockchain.getTransactionById(transactionId_val))
+        response = blockchain.getTransactionById(transactionId_val)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == 'POST':
         transactionId_val = request.form["transactionId_val"]
-        return str(blockchain.getTransactionById(transactionId_val))
+        response = blockchain.getTransactionById(transactionId_val)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
+
 
     
 @uPCoin.route('/blockchain/transactions', methods=['GET', 'POST'])
@@ -102,22 +122,30 @@ def all_transactions(transactionId_val=None):
     """ GET: Return the latest transactions
         POST: Add a transaction """
     if request.method == 'GET':
-        return str(blockchain.getAllTransactions())
+        response = blockchain.getAllTransactions()
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
+
     elif request.method == 'POST':
         transaction = Transaction.createTransaction(request.json)
-        return str(blockchain.addTransaction(transaction))
+        response = blockchain.addTransaction(transaction)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
 
 @uPCoin.route('/blockchain/transactions/unspent/', defaults={'address':None}, methods=['GET', 'POST'])
 @uPCoin.route('/blockchain/transactions/unspent/<address>', methods=['GET'])
 def get_unspent_transactions(address):
     """ Get the unspent transactions for the address. """
     if request.method == 'GET':
-        unspentTransaction = blockchain.getUnspentTransactionsForAddress(address)
-        return str(json.dumps(unspentTransaction))
+        response = blockchain.getUnspentTransactionsForAddress(address)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == 'POST':
         address = request.form["address"] 
         unspentTransaction = blockchain.getUnspentTransactionsForAddress(address)
-        return str(json.dumps(unspentTransaction))
+        response = unspentTransaction
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
 
 
 """
@@ -129,7 +157,9 @@ def wallets():
     """ GET: Get all wallets 
         POST: Create a new Wallet by posting a password """
     if request.method == 'GET':
-        return str(operator.getWallets())
+        response = operator.getWallets() 
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == "POST":
         print(request)
         print("\n\n")
@@ -145,17 +175,24 @@ def wallets():
         walletRepresentation = {}
         walletRepresentation["id"] = createdWallet.id
         walletRepresentation["keypairs"] = createdWallet.keypairs
-        return str(json.dumps(walletRepresentation))
+        response = walletRepresentation
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
+
 
 @uPCoin.route('/operator/wallets/', defaults={'walletId':None}, methods=['GET', 'POST'])
 @uPCoin.route('/operator/wallets/<walletId>', methods=['GET'])
 def getWalletById(walletId):
     """ Get a wallet by the specified ID """
     if request.method == "GET":
-        return str(operator.getWalletById(walletId))
+        response = operator.getWalletById(walletId)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == "POST":
         walletId = request.form["walletId"]
-        return str(operator.getWalletById(walletId))
+        response = operator.getWalletById(walletId)
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
 
 @uPCoin.route('/operator/wallets/<walletId>/transactions', methods=['POST'])
 def createTransaction(walletId):
@@ -200,7 +237,10 @@ def createTransaction(walletId):
         # Add thte transaction to the list of pending transaction
         transcationCreated = blockchain.addTransaction(Transaction.createTransactionObject(newTransaction))
 
-        return str(transcationCreated)
+        response = transactionCreated 
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
+
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses', methods=['GET', 'POST'])
 def addressesWallet(walletId):
@@ -208,7 +248,9 @@ def addressesWallet(walletId):
         POST: Create a new address for a wallet """
     if request.method == "GET":
         # Get all addresses of a wallet
-        return str(operator.getAddressesForWallet(walletId))
+       response = operator.getAddressesForWallet(walletId)
+       response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+       return render_template("response.html", response=response)
     elif request.method == "POST":
         # Create a new address
 
@@ -231,7 +273,8 @@ def addressesWallet(walletId):
             return "Wrong Wallet Password"
 
         newAddress = operator.generateAddressForWallet(walletId)
-        return str(json.dumps({"address": newAddress}))
+        response = json.dumps({"address": newAddress})
+        return render_template("response.html", response=response)
 
 
 @uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET'])
@@ -244,7 +287,9 @@ def getBalance(walletId, addressId):
     
         # Get a balance for the specified addressId and walletId
         balance = operator.getBalanceForAddress(addressId)
-        return str(json.dumps({"balance": balance}))
+        response = json.dumps({"balance": balance})
+        return render_template("response.html", response=response)
+
 
 """
 Node
@@ -253,7 +298,9 @@ Node
 def peers():
     """ Find the nodes of a peer """
     if request.method == 'GET':
-        return str(node.peers)
+        response = node.peers
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
     elif request.method == "POST":
         if request.data == b'':
             newPeer = node.connectWithPeer(request.form["peer"])
@@ -270,7 +317,8 @@ def getConfirmations(transactionId):
     elif request.method == 'POST':
         transactionId = request.form["transactionId"] 
         numConfirmations = node.getConfirmations(transactionId)
-    return str(json.dumps({"confirmations" : numConfirmations}))
+    response = json.dumps({"confirmations" : numConfirmations})
+    return render_template("response.html", response=response)
 
 """
 Miner
@@ -295,7 +343,9 @@ def mine():
         blockchain.addBlock(newBlock);
 
         # Output the just created block
-        return str(newBlock)
+        response = newBlock
+        response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
+        return render_template("response.html", response=response)
 
 
 if __name__=='__main__':
