@@ -287,7 +287,7 @@ def getBalance(walletId, addressId):
         balance = operator.getBalanceForAddress(addressId)
         response = json.dumps({"balance": balance})
         return render_template("response.html", response=response)
-    elif requests.method == "POST":
+    elif request.method == "POST":
         if walletId == "Form":
             walletId = request.form["walletId"]
             addressId = request.form["addressId"]
