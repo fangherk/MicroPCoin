@@ -2,7 +2,7 @@ import Block
 import Transaction
 import pickle
 import json
-
+import sys
 from pyee import EventEmitter
 
 POW_CURVE = 5
@@ -199,6 +199,10 @@ class Blockchain:
 
         If the new transaction is not valid, ValueError() is raised.
         """
+        # print("transaction adn self transactions \n\n\n")
+        # print(transaction)
+        # print(self.transactions)
+        # print(self.checkTransaction(transaction))
         if self.checkTransaction(transaction):
             # print(transaction)
             self.transactions.append(transaction)
@@ -206,6 +210,8 @@ class Blockchain:
             print("Transation added {}", transaction.id)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             self.ee.emit("addedTransaction", transaction)
+            print(transaction)
+            sys.exit()
             return transaction
         else:
             raise ValueError("can't add new transaction")
@@ -337,11 +343,18 @@ class Blockchain:
                            raise ValueError("transaction is already spent")
 
         for pending in self.transactions:
+            print("pending without change", pending)
             try:
                 pending = Transaction.createTransaction(pending)
             except:
                 pass
-            if transaction.id == pending.id:
+            print("transaction checking here \n\n aslkdjflasd \n\n\n")
+            print(transaction.id)
+            print(pending.id)
+            print(transaction.id == pending.id)
+            print("\n transaction + pending \n")
+            print(transaction, "\n", pending)
+            if transaction.id == pending.id or transaction == pending:
                 raise ValueError("pending transaction exists")
         return True
 
