@@ -237,7 +237,7 @@ def createTransaction(walletId):
         newTransaction.check()
 
         # Add thte transaction to the list of pending transaction
-        transcationCreated = blockchain.addTransaction(Transaction.createTransactionObject(newTransaction))
+        transactionCreated = blockchain.addTransaction(Transaction.createTransactionObject(newTransaction))
 
         response = transactionCreated 
         response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )

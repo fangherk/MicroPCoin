@@ -70,7 +70,7 @@ class Operator:
             raise ValueError("Cannot find address")
         
         # Generate a new address
-        address = self.wallets[targetIdx].generateAddress()
+        address = self.wallets[targetIdx].generateAddress(walletId)
 
         # Write to the database
         pickle.dump(self.wallets, open(self.dbName, "wb"))

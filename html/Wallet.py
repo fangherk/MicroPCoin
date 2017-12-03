@@ -19,12 +19,12 @@ class Wallet:
             return obj.__dict__
         return json.dumps(self, default=jsonDumper)
 
-    def generateAddress(self):
+    def generateAddress(self, walletId):
         """ 
         Generate an Address based on the secret 
         """ 
         if self.secret == None:
-            self.generateSecret(self.passwordHash, wallet_pass=True)
+            self.generateSecret(self.passwordHash + walletId, wallet_pass=True)
 
         # Last set of keypairs
         last_key_pair = None

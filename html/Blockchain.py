@@ -324,6 +324,10 @@ class Blockchain:
         # Check if the transaction is already in the blockchain.
         for block in self.blocks:
             for each in block.transactions:
+                try:
+                    each = Transaction.createTransaction(each)
+                except:
+                    pass
                 if(each.id == transaction.id):
                     raise ValueError("New transaction already exists in the blockchain")
         
@@ -331,6 +335,10 @@ class Blockchain:
         for inputTransaction in transaction.data["inputs"]:
             for block in self.blocks:
                 for transaction in block.transactions:
+                    try:
+                        transaction = Transaction.createTransaction(transaction)
+                    except:
+                        pass
                     for previousTransaction in transaction.data["inputs"]:
                         if(inputTransaction["index"] == previousTransaction["index"] and\
                            inputTransaction["transaction"] == previousTransaction["transaction"]):
@@ -347,7 +355,12 @@ class Blockchain:
         # Obtain a list of input/output transactions for the given address
         for block in self.blocks:
             for transaction in block.transactions:
+                try:
+                    transaction = Transaction.createTransaction(transaction)
+                except:
+                    pass
                 idx = 0
+                print(transaction)
                 for transactionOutput in transaction.data["outputs"]:
                     if transactionOutput["address"] == address:
                         transactionOutput["transaction"] = transaction.id;
