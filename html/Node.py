@@ -79,7 +79,9 @@ class Node:
         """ Tell the other peer that you exist """ 
         base_url = "http://{:}:{:}/node/peers".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
+        print("does it hang? \n\n\n")
         r = requests.post(base_url, data = {"peer" : peerToSend}, headers =headers)
+        print("yeah buddy? \n\n\n")
         return r.status_code
     
     def getLatestBlock(self, peer):

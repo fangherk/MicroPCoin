@@ -258,7 +258,6 @@ class Blockchain:
 
         # Check that all transacations are valid
         for transaction in newBlock.transactions:
-            print(transaction, type(transaction))
             try:
                 self.checkTransaction(Transaction.createTransactionObject(transaction))
             except:
@@ -271,6 +270,10 @@ class Blockchain:
         nfeeTransactions = 0
         nrewardTransactions = 0
         for transaction in newBlock.transactions:
+            try:
+                transaction = Transaction.createTransaction(transaction)
+            except:
+                pass
             nfeeTransactions += (transaction.type == "fee")
             nrewardTransactions += (transaction.type == "reward")
             for inputTransaction in transaction.data["inputs"]:
