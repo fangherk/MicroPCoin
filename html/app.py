@@ -279,18 +279,23 @@ def addressesWallet(walletId):
         return render_template("response.html", response=response)
 
 
-@uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET'])
+@uPCoin.route('/operator/wallets/<walletId>/addresses/<addressId>/balance', methods=['GET', 'POST'])
 def getBalance(walletId, addressId):
     """ Get the balance of a wallet """
     if request.method == "GET":
-        if walletId == "Form":
-            walletId = request.form["walletId"]
-            addressId = request.form["addressId"]
-    
         # Get a balance for the specified addressId and walletId
         balance = operator.getBalanceForAddress(addressId)
         response = json.dumps({"balance": balance})
         return render_template("response.html", response=response)
+    elif requests.method == "POST":
+        if walletId == "Form":
+            walletId = request.form["walletId"]
+            addressId = request.form["addressId"]
+        balance = operator.getBalanceForAddress(addressId)
+        response = json.dumps({"balance": balance})
+        return render_template("response.html", response=response)
+
+
 
 
 """
