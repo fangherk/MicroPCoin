@@ -129,6 +129,7 @@ def all_transactions(transactionId_val=None):
         return response
 
     elif request.method == 'POST':
+        print(request.json)
         transaction = Transaction.createTransaction(request.json)
         response = blockchain.addTransaction(transaction)
         response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )

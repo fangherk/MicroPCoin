@@ -62,7 +62,6 @@ class Node:
         my_url = "http://{}:{}".format(self.host, self.port)
         for peer in newPeers:
             if (peer not in self.peers) and (peer != os.environ["ip"]):
-                print("trying to send to peer")
                 self.peers.append(peer)         # add the url to the list of peers
                 self.sendPeer(peer, self.host)  # send your own URL
                 self.initConnection(peer)       # create a connection with the peer
@@ -82,7 +81,7 @@ class Node:
         headers = {'Content-Type' : 'application/json'}
         print("does it hang? \n\n\n")
         peerDict = {"peer" : peerToSend}
-        r = requests.post(base_url, data = json.dumps(peerDict) , headers =headers)
+        r = requests.post(base_url, data = json.dumps(peerDict), headers =headers)
         print("yeah buddy? \n\n\n")
         return r.status_code
     
@@ -109,9 +108,9 @@ class Node:
 
         temp_transactions = []
         for transaction in block.transactions:
-            try:
+            try: 
                 temp_transactions.append(transaction.__dict__)
-            except: 
+            except:
                 temp_transactions.append(transaction)
         json_output["transactions"] = temp_transactions
         

@@ -152,7 +152,7 @@ class Blockchain:
         self.checkChain(newChain)
 
         # Replace blocks after diversion.
-        self.blocks = newChain.blocks            
+        self.blocks = newChain.blocks 
         # Emit a blockchain replacement
         self.ee.emit("replacedBlockchain", newChain.blocks)
 
@@ -253,6 +253,10 @@ class Blockchain:
         if(previousBlock.hash != newBlock.previousHash):
             raise ValueError("Expect new block's previous hash to match newBlock.previousHash={:}, previousBlock.hash={:}".format(newBlock.previousHash, previousBlock.hash))
         if(newBlock.hash != newBlockHash):
+            print("\n\n\n NewBlock Hash Diff")
+            print(newBlock.hash)
+            print("\n")
+            print(newBlockHash)
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() <= self.getDifficulty(newBlock.index)):
             print("\n\n")
@@ -332,6 +336,13 @@ class Blockchain:
                            inputTransaction["transaction"] == previousTransaction["transaction"]):
                            raise ValueError("transaction is already spent")
 
+        for pending in self.transactions:
+            try:
+                pending = Transaction.createTransaction(pending)
+            except:
+                pass
+            if transaction.id == pending.id:
+                raise ValueError("pending transaction exists")
         return True
 
     def getUnspentTransactionsForAddress(self, address):
