@@ -3,7 +3,7 @@
     <head>
        <title> uPCoin</title>
        <!-- Bootstrap -->
-       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -11,84 +11,107 @@
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
     </head>
     <body>
-        <h1>Welcome! </h1>
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <span class="text-muted display-1">Welcome to uPCoin v1.0! </span>
+            </div>
+        </nav>
         <div class="container">
-            <div class="block " >
-            <h2> Block Stuff </h2>
-            <a href ="{{ url_for('get_blocks') }}" class="btn btn-primary"> GET Blockchain </a>
-            <a href ="{{ url_for('latest_blocks') }}" class="btn btn-primary"> Get Last Block </a>
-            <a href ="{{ url_for('all_transactions') }}" class="btn btn-primary"> Get Transactions </a>
-            <form action="{{ url_for('get_block_by_hash') }} " method="POST">
-                <input type="text" name="hash_val" value="hash_val">
-                <input type="submit" class = "btn btn-primary" value="Get Block by Hash Value">
-            </form>
-            <form action="{{ url_for('get_block_by_index') }} " method="POST">
-                <input type="text" name="index_val" value ="index_val">
-                <input type="submit" class = "btn btn-primary" value="Get Block by Index">
-            </form>
-            <form action="{{ url_for('get_transaction') }} " method="POST">
-                <input type="text" name="transactionId_val" value="transactionId_val">
-                <input type="submit" class = "btn btn-primary" value="Get Transaction By Id">
-            </form>
-
-            <form action="{{ url_for('get_unspent_transactions') }} " method="POST">
-                <input type="text" name="address" value="address">
-                <input type="submit" class = "btn btn-primary" value="Get Unspent Transactions">
-            </form>
-
-            </div>
-            <div class="wallet">
-            <h2>Wallet Stuff</h2>
-            <a href ="{{ url_for('wallets') }}" class="btn btn-primary"> Get All Wallets </a>
-            <form action="{{ url_for('wallets') }} " method="POST">
-                <input type="text" name="password" value ="password">
-                <input type="submit" class = "btn btn-primary" value="Make a Wallet">
-            </form>
-            <form action="{{ url_for('getWalletById') }} " method="POST">
-                <input type="text" name="walletId" value="walletId">
-                <input type="submit" class = "btn btn-primary" value="Get Wallet by Id">
-            </form>
-            <form action="{{ url_for('createTransaction', walletId="Form") }} " method="POST">
-                <input type="text" name="walletId" value="walletId">
-                <input type="text" name="password" value="password">
-                <input type="text" name="from"     value="from" >
-                <input type="text" name="to"       value="to">
-                <input type="text" name="amount"   value="amount">
-                <input type="text" name="changeAddress"  value="changeAddress">
-                <input type="submit" class = "btn btn-primary" value="Make a Transaction">
-            </form>
-            <form action="{{ url_for('addressesWallet', walletId="Form") }} " method="POST">
-                <input type="text" name="walletId" value="walletId">
-                <input type="text" name="password" value="password">
-                <input type="submit" class = "btn btn-primary" value="Generate Address From Wallet">
-            </form>
-            <form action="{{ url_for('getBalance', walletId="Form", addressId="address") }} " method="POST">
-                <input type="text" name="walletId" value="walletId">
-                <input type="text" name="addressId" value="addressId">
-                <input type="submit" class = "btn btn-primary" value="Balance of an address">
-            </form>
-            </div>
-
-            <div class="node ">
-            <h2>Node Stuff </h2>
-            <form action="{{ url_for('peers') }} " method="POST">
-                <input type="text" name="peer" value="peer">
-                <input type="submit" class = "btn btn-primary" value="Connect to Peers">
-            </form>
-            <form action="{{ url_for('getConfirmations', transactionId="Form") }} " method="POST">
-                <input type="text" name="transactionId" value="transactionId">
-                <input type="submit" class = "btn btn-primary" value="Confirmations of a Transaction Id">
-            </form>
-            </div>
-            
-            <div class="miner column">
-            <h2> Miner Stuff</h2>
-            <form action="{{ url_for('mine') }} " method="POST">
-                <input type="text" name="rewardAddress" value="rewardAddress">
-                <input type="submit" class = "btn btn-primary" value="Crypto Mining">
-            </form>
+            <div>
+                <h2 class="display-3"> Instructions </h2>
+                <ul class="list-group">
+                  <li class="list-group-item list-group-item-success"><i><b>Blockchain</b></i>&nbsp;allows you to look at the data inside the blockchain.</li>
+                  <li class="list-group-item list-group-item-info"><i><b>Wallet</b></i>&nbsp;allows you to operate your wallet, including making transactions.</li>
+                  <li class="list-group-item list-group-item-warning"><i><b>Node</b></i>&nbsp;allows you to connect with other&nbsp;<i>Node</i>.</li>
+                  <li class="list-group-item list-group-item-danger"><i><b>Miner</b></i>&nbsp;allows you to mine a block in order to put to the blockchain.</li>
+                </ul>
             </div>
         </div>
+        <div class="container" style="">
+            <div class="card col-6 block" style="padding: 20px; border-color: rgb(41,124,69); background-color: rgba(41,124,69, 0.5);">
+                <h2 style="text-indent: 20px;">Blockchain</h2>
+                <div class="row" style="margin:auto !important;">
+                    <a href ="{{ url_for('get_blocks') }}" class="btn btn-outline-success btn-sm" style="box-sizing: inherit; margin:15px;"> Get Blockchain </a>
+                    <a href ="{{ url_for('latest_blocks') }}" class="btn btn-outline-success btn-sm" style="box-sizing: inherit; margin:15px;"> Get Last Block </a>
+                    <a href ="{{ url_for('all_transactions') }}" class="btn btn-outline-success btn-sm" style="box-sizing: inherit; margin:15px;"> Get Transactions </a>
+                </div>
+                <form action="{{ url_for('get_block_by_hash') }} " method="POST">
+                    <input type="text" name="hash_val" value="hash_val">
+                    <input type="submit" class = "btn btn-outline-success btn-md" value="Get Block by Hash Value">
+                </form>
+                <form action="{{ url_for('get_block_by_index') }} " method="POST">
+                    <input type="text" name="index_val" value ="index_val">
+                    <input type="submit" class = "btn btn-outline-success btn-md" value="Get Block by Index">
+                </form>
+                <form action="{{ url_for('get_transaction') }} " method="POST">
+                    <input type="text" name="transactionId_val" value="transactionId_val">
+                    <input type="submit" class = "btn btn-outline-success btn-md" value="Get Transaction By Id">
+                </form>
+
+                <form action="{{ url_for('get_unspent_transactions') }} " method="POST">
+                    <input type="text" name="address" value="address">
+                    <input type="submit" class = "btn btn-outline-success btn-md" value="Get Unspent Transactions">
+                </form>
+            </div>
+            <div class="card col-6 wallet" style="padding: 20px; border-color: rgb(38,89,106); background-color: rgba(38,89,106,0.5);">
+                <h2 style="text-indent: 20px;">Wallet</h2>
+                <div class="row" style="margin:auto !important;">
+                    <a href ="{{ url_for('wallets') }}" class="btn btn-outline-info btn-sm" style="box-sizing: inherit; margin:21px;"> Get All Wallets </a>
+                </div>
+                <form action="{{ url_for('wallets') }} " method="POST">
+                    <input type="text" name="password" value ="password">
+                    <input type="submit" class = "btn btn-outline-info btn-md" value="Make a Wallet">
+                </form>
+                <form action="{{ url_for('getWalletById') }} " method="POST">
+                    <input type="text" name="walletId" value="walletId">
+                    <input type="submit" class = "btn btn-outline-info btn-md" value="Get Wallet by Id">
+                </form>
+                <form action="{{ url_for('createTransaction', walletId="Form") }} " method="POST">
+                    <input type="text" name="walletId" value="walletId">
+                    <input type="text" name="password" value="password">
+                    <input type="text" name="from"     value="from" >
+                    <input type="text" name="to"       value="to">
+                    <input type="text" name="amount"   value="amount">
+                    <input type="text" name="changeAddress"  value="changeAddress">
+                    <input type="submit" class = "btn btn-outline-info btn-md" value="Make a Transaction">
+                </form>
+                <form action="{{ url_for('addressesWallet', walletId="Form") }} " method="POST">
+                    <input type="text" name="walletId" value="walletId">
+                    <input type="text" name="password" value="password">
+                    <input type="submit" class = "btn btn-outline-info btn-md" value="Generate Address From Wallet">
+                </form>
+                <form action="{{ url_for('getBalance', walletId="Form", addressId="address") }} " method="POST">
+                    <input type="text" name="walletId" value="walletId">
+                    <input type="text" name="addressId" value="addressId">
+                    <input type="submit" class = "btn btn-outline-info btn-md" value="Balance of an address">
+                </form>
+            </div>
+
+            <div class="card col-6 node" style="padding: 20px; border-color: rgb(170,115,57); background-color: rgba(170,115,57,0.5);">
+                <h2 style="text-indent: 20px;">Node</h2>
+                <form action="{{ url_for('peers') }} " method="POST">
+                    <input type="text" name="peer" value="peer">
+                    <input type="submit" class = "btn btn-outline-warning btn-md" value="Connect to Peers">
+                </form>
+                <form action="{{ url_for('getConfirmations', transactionId="Form") }} " method="POST">
+                    <input type="text" name="transactionId" value="transactionId">
+                    <input type="submit" class = "btn btn-outline-warning btn-md" value="Confirmations of a Transaction Id">
+                </form>
+            </div>
+            
+            <div class="card col-6 miner" style="padding: 20px; border-color: rgb(170,75,57); background-color: rgba(170,75,57,0.5);">
+                <h2 style="text-indent: 20px;">Miner</h2>
+                <form action="{{ url_for('mine') }} " method="POST">
+                    <input type="text" name="rewardAddress" value="rewardAddress">
+                    <input type="submit" class = "btn btn-outline-danger btn-md" value="Crypto Mining">
+                </form>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">Copyrighted (c) Teerapat Jenrungrot, Herrick Fang 2017.</span>
+            </div>
+        </footer>
     </body>
     
 </html>

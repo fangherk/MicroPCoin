@@ -9,10 +9,11 @@ import binascii
 class Operator:
     def __init__(self, dbName, blockChain, init=True):
         self.dbName = dbName
-        self.wallets = []
-        if not init:
-            self.wallets = pickle.load(open(dbName, "rb"))
-        else:
+        try: 
+            temp_wallets = pickle.load(open(dbName, "rb"))
+            self.wallets = temp_wallets
+        except OSError as e:
+            self.wallets = []
             pickle.dump(self.wallets, open(dbName, "wb"))
         self.blockchain = blockChain
 
