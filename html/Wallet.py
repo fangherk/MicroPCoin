@@ -1,3 +1,7 @@
+# wallet.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import hashlib, binascii
 import ed25519 # API Documentation is available at: https://github.com/warner/python-ed25519
 import json
