@@ -1,3 +1,7 @@
+# block.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import hashlib
 import hashing
 import json
@@ -38,7 +42,6 @@ class Block:
         nonceBytes = bytes([int(nonceBytesString[0:2], 16), int(nonceBytesString[2:4], 16), int(nonceBytesString[4:6], 16),  int(nonceBytesString[6:8], 16)])
         strInput = str(self.index) + str(self.previousHash) + str(self.timestamp) + str(self.transactions)
         strInput = strInput.replace("\"","\'")
-        # print("String input\n", strInput)
         
         print("toHash() BytesString: {:}".format(nonceBytes + strInput.encode('utf-8')))
         return hashlib.sha256(nonceBytes + strInput.encode('utf-8')).hexdigest()
