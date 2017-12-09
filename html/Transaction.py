@@ -1,3 +1,7 @@
+# transaction.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import hashlib
 import json
 import ed25519
@@ -101,9 +105,6 @@ def createTransaction(data):
     Create a transaction from dictionary.
     """
     transaction = Transaction()
-    # print(data)
-    # print(data["id"])
-    # print(transaction.id)
     transaction.id = data["id"]
     transaction.type = data["type"]
     transaction.data = data["data"]
