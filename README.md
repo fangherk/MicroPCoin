@@ -1,4 +1,4 @@
-x# MicroPCoin
+# MicroPCoin
 
 An implementation of a cryptocurrency protocol based on the Bitcoin Protocol.
 
@@ -12,15 +12,6 @@ We will create a prototype system, composed of 2 users in the same network to de
 
 - [MuddPi Mark IV Board](http://pages.hmc.edu/harris/class/e155/E155BoardSchematic2.pdf) 
 - [Raspberry Pi Model 3B](https://www.raspberrypi.org/documentation/hardware/raspberrypi/schematics/Raspberry-Pi-3B-V1.2-Schematics.pdf)
-
-
-### Installing
-
-TODO
-
-## Tests
-
-TODO
 
 ## Next Steps
 
