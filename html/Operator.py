@@ -1,3 +1,7 @@
+# operator.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import Wallet
 import TransactionBuilder
 import secrets
@@ -107,17 +111,12 @@ class Operator:
         wallet = self.getWalletById(walletId)
         secretKey = wallet.getSecretKeyByAddress(fromAddressId)
 
-        #print("utxo:{}\ntoAddressId:{}\namount:{}\nchangeAddressId:{}\nsecretKey:{}\n".format(type(utxo), type(toAddressId), type(amount), type(changeAddressId), type(secretKey)))
-        #print("utxo", utxo)
         transaction = TransactionBuilder.TransactionBuilder()
         transaction.fromAddress(utxo)
         transaction.to(toAddressId, amount)
         transaction.change(changeAddressId)
         transaction.fee(1)
         transaction.sign(secretKey)
-        # print(transaction)
-        #print("memememememem")
-        # TODO: finish this up
         return transaction.build()
         
 
