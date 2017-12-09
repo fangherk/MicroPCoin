@@ -1,3 +1,7 @@
+# node.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import requests
 import Blockchain
 import Transaction
@@ -37,8 +41,6 @@ class Node:
                 print("No peers to send to")
         @self.blockchain.ee.on("addedBlock")
         def data_handler(data):
-            #print(type(data))
-            #print(data)
             if self.peers:
                 for peer in self.peers:
                     self.sendLatestBlock(peer, data)
@@ -79,10 +81,8 @@ class Node:
         """ Tell the other peer that you exist """ 
         base_url = "http://{:}:{:}/node/peers".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
-        print("does it hang? \n\n\n")
         peerDict = {"peer" : peerToSend}
         r = requests.post(base_url, data = json.dumps(peerDict), headers =headers)
-        print("yeah buddy? \n\n\n")
         return r.status_code
     
     def getLatestBlock(self, peer):
@@ -98,7 +98,6 @@ class Node:
         """ Send a block to your peer """
         base_url = "http://{}:{}/blockchain/blocks/latest".format(peer, 5000)
 
-        # print("block\n", block)
         json_output = {}
         json_output["index"] = block.index
         json_output["previousHash"] = block.previousHash
@@ -114,12 +113,10 @@ class Node:
                 temp_transactions.append(transaction)
         json_output["transactions"] = temp_transactions
         
-        print("\njson_output\n", json_output)
 
         headers = {'Content-Type' : 'application/json'}
          
         r = requests.put(base_url, data = json.dumps(json_output), headers = headers)
-        print("\n")
         print("Sent Latest Block with error message {}".format(r.status_code))
         return r.status_code
 
@@ -140,10 +137,6 @@ class Node:
         """ Send a transaction from peer to peer using wallet implementation """
         base_url = "http://{}:{}/blockchain/transactions".format(peer, 5000)
         headers = {'Content-Type' : 'application/json'}
-        print("transaction and dictionary from send Transaction \n\n")
-        print(transaction)
-        print(transaction.__dict__)
-        print("end ---- \n\n")
         r = requests.post(base_url, data = json.dumps(transaction.__dict__), headers=headers)
         return r.status_code
 
