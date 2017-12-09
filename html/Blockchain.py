@@ -1,3 +1,7 @@
+# blockchain.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import Block
 import Transaction
 import pickle
@@ -17,9 +21,6 @@ class Blockchain:
         """
         if init:
             # Create genesis block
-            
-            # temp_block = pickle.load(open(dbName, "rb"))
-            # temp_transactions = pickle.load(open(transactionsDbName, "rb"))
             try:
                 temp_block = open(dbName, "rb")
                 temp_block = pickle.load(temp_block)
@@ -37,8 +38,6 @@ class Blockchain:
             self.dbName = dbName
             self.transactionsDbName = transactionsDbName
             self.ee = EventEmitter()
-            # pickle.dump(self.blocks, open(dbName, "wb"))
-            # pickle.dump(self.transactions, open(transactionsDbName, "wb"))
         else:
             # Create a blockchain from given files
             blockDb = pickle.load(open(dbName, "rb"))
@@ -117,7 +116,6 @@ class Blockchain:
         If the transaction is not found, ValueError() is raised.
         """
         for transaction in self.transactions:
-            # print(transaction.id)
             if transaction.id == id:
                 return transaction
         raise ValueError("Transaction with id={:} not found".format(id))
@@ -129,7 +127,6 @@ class Blockchain:
         If the transaction is not found, ValueError() is raised.
         """
         for block in self.blocks:
-            # print(block)
             for transaction in block.transactions:
                 try:
                     transaction = Transaction.createTransaction(transaction)
@@ -137,7 +134,6 @@ class Blockchain:
                     pass
                 if transaction.id == transactionId:
                     return transaction
-        # print("transaction checker!!!!")
         raise ValueError("Transaction with id={:} not found".format(transactionId))
 
     def replaceChain(self, newChain):
@@ -164,12 +160,6 @@ class Blockchain:
         """
         Check if the input blockchain is valid. 
         """
-        print("Check Chain \n\n")
-        print(self.blocks[0])
-        print(type(self.blocks[0]))
-        print(chain.blocks[0])
-        print(type(chain.blocks[0]))
-        print(self.blocks[0] == chain.blocks[0])
         # Check if the genesis block is the same
         if(self.blocks[0].hash != chain.blocks[0].hash):
             raise ValueError("Genesis blocks aren't the same")
@@ -203,18 +193,10 @@ class Blockchain:
 
         If the new transaction is not valid, ValueError() is raised.
         """
-        # print("transaction adn self transactions \n\n\n")
-        # print(transaction)
-        # print(self.transactions)
-        # print(self.checkTransaction(transaction))
         if self.checkTransaction(transaction):
-            # print(transaction)
             self.transactions.append(transaction)
-            # print(self.transactions)
-            print("Transation added {}", transaction.id)
             pickle.dump(self.transactions, open(self.transactionsDbName, "wb"))
             self.ee.emit("addedTransaction", transaction)
-            print("\t\t\t\n\n\n\n hello exiting?? \n\n\n\n")
             return transaction
         else:
             raise ValueError("can't add new transaction")
@@ -245,14 +227,6 @@ class Blockchain:
         """
         Check that the new block is valid based on its previous block.
         """
-
-        # print("\n\n\n\n\n New block \n\n\n\n\n")
-        # print(newBlock)
-        # print("\n\n\n\n\n")
-
-        # print("\n\n\n\n\n Previous block \n\n\n\n\n")
-        # print(previousBlock)
-        # print("\n\n\n\n\n")
         
         # Re-calculate the hash of the new block
         newBlockHash = newBlock.toHash()
@@ -262,15 +236,8 @@ class Blockchain:
         if(previousBlock.hash != newBlock.previousHash):
             raise ValueError("Expect new block's previous hash to match newBlock.previousHash={:}, previousBlock.hash={:}".format(newBlock.previousHash, previousBlock.hash))
         if(newBlock.hash != newBlockHash):
-            print("\n\n\n NewBlock Hash Diff")
-            print(newBlock.hash)
-            print("\n")
-            print(newBlockHash)
             raise ValueError("Expect new block's hash to match the calculation")
         if(newBlock.getDifficulty() <= self.getDifficulty(newBlock.index)):
-            print("\n\n")
-            print(newBlock)
-            print(newBlock)
             raise ValueError("Expect new block's difficulty to be larger \
                               [newBlock.diif = {:}] [{:}]".format(newBlock.getDifficulty(), self.getDifficulty(newBlock.index)))
 
@@ -346,17 +313,10 @@ class Blockchain:
                            raise ValueError("transaction is already spent")
 
         for pending in self.transactions:
-            print("pending without change", pending)
             try:
                 pending = Transaction.createTransaction(pending)
             except:
                 pass
-            print("transaction checking here \n\n aslkdjflasd \n\n\n")
-            # print(transaction.id)
-            # print(pending.id)
-            # print(transaction.id == pending.id)
-            print("\n transaction + pending \n")
-            print(transaction, "\n", pending, "\n", "end\n")
             if transaction.id == pending.id or transaction == pending:
                 raise ValueError("pending transaction exists")
         return True
@@ -375,7 +335,6 @@ class Blockchain:
                 except:
                     pass
                 idx = 0
-                print(transaction)
                 for transactionOutput in transaction.data["outputs"]:
                     if transactionOutput["address"] == address:
                         transactionOutput["transaction"] = transaction.id;
@@ -405,4 +364,3 @@ def createBlockchain(blockchain, blocks):
     newBlockchain.transactions = []
 
     return newBlockchain
-
