@@ -1,3 +1,7 @@
+# app.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 """ Library Imports """
 from flask import Flask, jsonify, request, render_template
 from flask.json import loads, JSONEncoder
@@ -50,20 +54,16 @@ def latest_blocks():
         return response
         return render_template("response.html", response=response)
     elif request.method == 'PUT':
-        # print("I get here")
-        print(request.json)
         # Take in the request
         inputJSON = request.json
 
         # Create a block for the request
-        # print("\nrequest\n", request.json)
         blockToAdd = Block.Block()
         blockToAdd.index = inputJSON["index"]
         blockToAdd.previousHash = inputJSON["previousHash"]
         blockToAdd.timestamp = inputJSON["timestamp"]
         blockToAdd.nonce = inputJSON["nonce"]
         blockToAdd.transactions = [Transaction.createTransaction(transaction) for transaction in inputJSON["transactions"]]
-        # print(blockToAdd)
         blockToAdd.hash = blockToAdd.toHash()
 
         # Add block
@@ -129,7 +129,6 @@ def all_transactions(transactionId_val=None):
         return response
 
     elif request.method == 'POST':
-        print(request.json)
         transaction = Transaction.createTransaction(request.json)
         try: 
             blockchain.getTransactionById(transaction.id)
@@ -168,9 +167,6 @@ def wallets():
         response = json.dumps(response, default = lambda o:o.__dict__,indent = 4, separators = (',', ': ') )
         return render_template("response.html", response=response)
     elif request.method == "POST":
-        print(request)
-        print("\n\n")
-        print("request data", request.data)
         if request.data == b'':
             password = request.form["password"]    
         else:
@@ -206,9 +202,6 @@ def createTransaction(walletId):
     """ Create a Transaction """
 
     if request.method == "POST":
-        print(request)
-        print("\n\n")
-        print("request data", request.data)
         # Obtain relevant data:
         #   password, fromAddress, toAddress, amount, changeAddress
         if walletId == "Form":
@@ -318,7 +311,6 @@ def peers():
             print(request.form["peer"])
             newPeer = node.connectWithPeer(request.form["peer"])
         else:
-            print(request.data)
             jsonData = request.json
             newPeer = node.connectWithPeer(jsonData["peer"])
         return str(newPeer)
