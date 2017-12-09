@@ -1,3 +1,7 @@
+# transactionBuilder.py
+# HMC E85 8 December 2017
+# hfang@hmc.edu, mjenrungrot@hmc.edu
+
 import secrets
 import Transaction
 import json
