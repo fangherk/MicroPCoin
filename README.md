@@ -13,7 +13,13 @@ We will create a prototype system, composed of 2 users in the same network to de
 - [MuddPi Mark IV Board](http://pages.hmc.edu/harris/class/e155/E155BoardSchematic2.pdf) 
 - [Raspberry Pi Model 3B](https://www.raspberrypi.org/documentation/hardware/raspberrypi/schematics/Raspberry-Pi-3B-V1.2-Schematics.pdf)
 
-## Next Steps
+## Design
+
+Short:
+- FPGA handles proof-of-work and finds hash with SHA-256. it also finds the nonce  
+- Raspberry Pi handles the API, moving data around for P2P connectivity through HTTP requests
+
+## Milestones
 
 - [x] Raspberry Pi  
   - [x] HTTP Server, Networking Protocols
@@ -25,10 +31,21 @@ We will create a prototype system, composed of 2 users in the same network to de
   - [x] Miner, SHA-Algorithm Implementation
   - [x] Blockchain Verification
 
+## Front End
+
+![FrontFace](pics/interface.png)
+
+## Papers
+See the following for more information!
+
+- [Proposal](papers/proposal.pdf)
+- [Mid-Term Report](papers/midreport.pdf)
+- [Final Paper](papers/finalreport.pdf)
+
 ## Built With
 
-* [SystemVerilog](http://ieeexplore.ieee.org/document/6469140/) - The language used for the SHA-Algorithm.
-* [Python 3.6](https://www.python.org/) - HTTP Server Setup
+* [SystemVerilog](http://ieeexplore.ieee.org/document/6469140/) - The language used for the SHA-Algorithm to implement a hardware accelerator.
+* [Python 3.6](https://www.python.org/) - HTTP Server Setup with Flask for API endpoints.
 * C - Interfacing between Pi and FPGA.
 
 ## License
