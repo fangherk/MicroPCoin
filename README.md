@@ -35,6 +35,10 @@ Short:
 
 ![FrontFace](pics/interface.png)
 
+## Usage
+
+`cd html && sudo -E python3.6 app.py `
+
 ## Papers
 See the following for more information!
 
